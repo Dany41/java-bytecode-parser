@@ -16,6 +16,8 @@ public class ByteCodeRunner {
                     .magic(dataInputStream.readNBytes(4))
                     .minorVersion(dataInputStream.readNBytes(2))
                     .majorVersion(dataInputStream.readNBytes(2))
+                    .constantPoolCount(dataInputStream.readNBytes(2))
+                    .constantPool(dataInputStream)
                     .build();
 
             System.out.println(bytecodeClass);

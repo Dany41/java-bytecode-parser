@@ -20,6 +20,13 @@
       <artifactId>commons-codec</artifactId>
       <version>1.16.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/one.util/streamex -->
+    <dependency>
+      <groupId>one.util</groupId>
+      <artifactId>streamex</artifactId>
+      <version>0.8.1</version>
+    </dependency>
+
   </dependencies>
 
   <build>
