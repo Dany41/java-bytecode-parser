@@ -1,14 +1,17 @@
-package org.bytecodeparser;
+package org.bytecodeparser.core;
 
 import lombok.Setter;
 import one.util.streamex.EntryStream;
 import org.apache.commons.codec.binary.Hex;
+import org.bytecodeparser.structures.ConstantTypeAndStructure;
+import org.bytecodeparser.structures.FieldInfo;
+import org.bytecodeparser.structures.MethodInfo;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.bytecodeparser.accessflags.ClassAccessFlags.parseAccessFlags;
-import static org.bytecodeparser.Utils.bytesToInt;
+import static org.bytecodeparser.utility.Utils.bytesToInt;
 
 // todo: work on annotation processing to reduce boilerplate for [field]Bytes + [field]String (s) below
 public class BytecodeClass {

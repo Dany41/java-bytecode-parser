@@ -1,4 +1,4 @@
-package org.bytecodeparser;
+package org.bytecodeparser.structures;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.bytecodeparser.Utils.bytesToInt;
+import static org.bytecodeparser.utility.Utils.bytesToInt;
 
 public class AttributeInfo {
     int attributeNameIndex;

@@ -1,13 +1,17 @@
-package org.bytecodeparser;
+package org.bytecodeparser.core;
 
 import org.bytecodeparser.exceptions.UnknownConstantTypeException;
+import org.bytecodeparser.structures.ConstantType;
+import org.bytecodeparser.structures.ConstantTypeAndStructure;
+import org.bytecodeparser.structures.FieldInfo;
+import org.bytecodeparser.structures.MethodInfo;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bytecodeparser.Utils.bytesToInt;
+import static org.bytecodeparser.utility.Utils.bytesToInt;
 
 // todo: rework design of BytecodeClass to encapsulate the processing logic there based on DataInputStream -> delete this
 public class BytecodeClassBuilder {

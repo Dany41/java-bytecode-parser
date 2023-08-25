@@ -1,4 +1,4 @@
-package org.bytecodeparser;
+package org.bytecodeparser.config;
 
 import lombok.Getter;
 

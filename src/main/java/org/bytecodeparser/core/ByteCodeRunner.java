@@ -1,4 +1,4 @@
-package org.bytecodeparser;
+package org.bytecodeparser.core;
 
 import org.bytecodeparser.exceptions.ClassBytecodeParsingException;
 
@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class ByteCodeRunner {
 
-    static void run(byte[] bytes) {
+    public static void run(byte[] bytes) {
         DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
         try {
 

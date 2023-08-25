@@ -1,5 +1,7 @@
 package org.bytecodeparser;
 
+import org.bytecodeparser.config.AppConfig;
+import org.bytecodeparser.core.ByteCodeRunner;
 import org.bytecodeparser.files.BytecodeFileResolver;
 import org.bytecodeparser.files.BytecodeFileResolverInResources;
 

@@ -1,4 +1,4 @@
-package org.bytecodeparser;
+package org.bytecodeparser.structures;
 
 import lombok.Getter;
 
@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static org.bytecodeparser.Utils.bytesToInt;
+import static org.bytecodeparser.utility.Utils.bytesToInt;
 
 public enum ConstantType {
     CONSTANT_UTF8(byteArray -> "CONSTANT_Utf8_info { tag -> 1; value -> " + new String(byteArray, StandardCharsets.UTF_8) + " }"),
