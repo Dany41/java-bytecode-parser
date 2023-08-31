@@ -4,29 +4,25 @@ import org.bytecodeparser.accessflags.MethodAccessFlags;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static org.bytecodeparser.utility.Utils.bytesToInt;
+import static org.bytecodeparser.structures.AttributeInfo.readAttributes;
 
 public class MethodInfo {
-    String accessFlags;
-    int nameIndex;
-    int descriptorIndex;
-    int attributeCount;
-    List<AttributeInfo> attributeInfo;
+    private final String accessFlags;
+    private final short nameIndex;
+    private final short descriptorIndex;
+    private final short attributeCount;
+    private final AttributeInfo[] attributeInfo;
 
     public MethodInfo(DataInputStream dataInputStream) throws IOException {
-        byte[] accessFlagsBytes = dataInputStream.readNBytes(2);
-        this.accessFlags = bytesToInt(accessFlagsBytes, 2) + " " + MethodAccessFlags.parseAccessFlags(accessFlagsBytes);
-        this.nameIndex = bytesToInt(dataInputStream.readNBytes(2));
-        this.descriptorIndex = bytesToInt(dataInputStream.readNBytes(2));
-        this.attributeCount = bytesToInt(dataInputStream.readNBytes(2));
-        this.attributeInfo = new ArrayList<>();
-        for (int i = 0; i < attributeCount; i++) {
-            attributeInfo.add(new AttributeInfo(dataInputStream));
-        }
+        short accessFlags = dataInputStream.readShort();
+        this.accessFlags = Integer.toString(accessFlags, 2) + " " + MethodAccessFlags.parseAccessFlags(accessFlags);
+        this.nameIndex = dataInputStream.readShort();
+        this.descriptorIndex = dataInputStream.readShort();
+        this.attributeCount = dataInputStream.readShort();
+        this.attributeInfo = readAttributes(dataInputStream, attributeCount);
     }
 
     public String toPrettyString(int tabs) {
@@ -35,7 +31,7 @@ public class MethodInfo {
                 "\n" + "\t".repeat(tabs) + "nameIndex = " + nameIndex + ";" +
                 "\n" + "\t".repeat(tabs) + "descriptorIndex = " + descriptorIndex + ";" +
                 "\n" + "\t".repeat(tabs) + "attributeCount = " + attributeCount + ";" +
-                "\n" + "\t".repeat(tabs) + "attributeInfo = " + attributeInfo.stream()
+                "\n" + "\t".repeat(tabs) + "attributeInfo = " + Arrays.stream(attributeInfo)
                 .map(ai -> ai.toPrettyString(tabs + 2))
                 .collect(Collectors.joining(",", "[\n" + "\t".repeat(tabs + 1), "]")) + ";" +
                 "\n" + "\t".repeat(tabs - 1) + '}';
