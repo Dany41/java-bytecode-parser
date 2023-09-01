@@ -1,6 +1,5 @@
 package org.bytecodeparser.accessflags;
 
-import java.math.BigInteger;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
@@ -14,10 +13,9 @@ public enum FieldAccessFlags {
         this.value = value;
     }
 
-    public static String parseAccessFlags(byte[] bytes) {
-        int givenValue = new BigInteger(bytes).intValue();
+    public static String parseAccessFlags(short mask) {
         return EnumSet.allOf(FieldAccessFlags.class).stream()
-                .filter(af -> (af.value & givenValue) == af.value)
+                .filter(af -> (af.value & mask) == af.value)
                 .map(String::valueOf)
                 .collect(Collectors.joining(", ", "(", ")"));
     }

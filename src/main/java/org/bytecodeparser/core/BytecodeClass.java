@@ -1,159 +1,74 @@
 package org.bytecodeparser.core;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 import one.util.streamex.EntryStream;
-import org.apache.commons.codec.binary.Hex;
+import one.util.streamex.IntStreamEx;
+import org.bytecodeparser.structures.AttributeInfo;
 import org.bytecodeparser.structures.ConstantTypeAndStructure;
 import org.bytecodeparser.structures.FieldInfo;
 import org.bytecodeparser.structures.MethodInfo;
 
-import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.bytecodeparser.accessflags.ClassAccessFlags.parseAccessFlags;
-import static org.bytecodeparser.utility.Utils.bytesToInt;
 
 // todo: work on annotation processing to reduce boilerplate for [field]Bytes + [field]String (s) below
+@Getter
+@Setter(AccessLevel.PROTECTED)
 public class BytecodeClass {
 
-    @Setter
-    private byte[] magicBytes;
-    @Setter
-    private byte[] minorVersionBytes;
-    @Setter
-    private byte[] majorVersionBytes;
-    @Setter
-    private byte[] constantPoolCountBytes;
-    @Setter
-    private Map<Integer, ConstantTypeAndStructure> constantPool;
-    @Setter
-    private byte[] accessFlagsBytes;
-    @Setter
-    private byte[] thisClassBytes;
-    @Setter
-    private byte[] superClassBytes;
-    @Setter
-    private byte[] interfaceCountBytes;
-    @Setter
-    private Map<Integer, byte[]> interfaces;
-    @Setter
-    private byte[] fieldsCountBytes;
-    @Setter
-    private Map<Integer, FieldInfo> fieldInfo;
-    @Setter
-    private byte[] methodCountBytes;
-    @Setter
-    private Map<Integer, MethodInfo> methodInfo;
-    private String magicString;
-    private String minorVersionString;
-    private String majorVersionString;
-    private String constantPoolCountString;
-    private String constantPoolString;
-    private String accessFlagsString;
-    private String thisClassString;
-    private String superClassString;
-    private String interfaceCountString;
-    private String interfacesString;
-    private String fieldsCountString;
-    private String fieldsInfoString;
-    private String methodCountString;
-    private String methodInfoString;
+    private int magic;
+    private short minorVersion;
+    private short majorVersion;
+    private short constantPoolCount;
+    private ConstantTypeAndStructure[] constantPool;
+    private short accessFlags;
+    private short thisClass;
+    private short superClass;
+    private short interfaceCount;
+    private short[] interfaces;
+    private short fieldsCount;
+    private FieldInfo[] fieldInfo;
+    private short methodCount;
+    private MethodInfo[] methodInfo;
+    private short attributesCount;
+    private AttributeInfo[] attributeInfo;
 
-
-    public String getMagic() {
-        if (this.magicString == null && this.magicBytes != null) {
-            this.magicString = new String(Hex.encodeHex(magicBytes));
-        }
-        return this.magicString;
+    public String getMagicPretty() {
+        return Integer.toHexString(magic);
     }
 
-    public String getMinorVersion() {
-        if (this.minorVersionString == null && this.minorVersionBytes != null) {
-            this.minorVersionString = bytesToInt(this.minorVersionBytes).toString();
-        }
-        return this.minorVersionString;
-    }
-
-    public String getMajorVersion() {
-        if (this.majorVersionString == null && this.majorVersionBytes != null) {
-            this.majorVersionString = bytesToInt(this.majorVersionBytes).toString();
-        }
-        return this.majorVersionString;
-    }
-
-    public String getConstantPoolCount() {
-        if (this.constantPoolCountString == null && this.constantPoolCountBytes != null) {
-            this.constantPoolCountString = bytesToInt(this.constantPoolCountBytes).toString();
-        }
-        return this.constantPoolCountString;
-    }
-
-    public String getConstantPool() {
-        if (this.constantPoolString == null && this.constantPool != null) {
-            this.constantPoolString = getConstantPoolAsPrettyString(2);
-        }
-        return this.constantPoolString;
+    public String getConstantPoolPretty() {
+        return getConstantPoolAsPrettyString(2);
     }
 
     private String getConstantPoolAsPrettyString(int tabs) {
         return "[\n" + "\t".repeat(tabs) + EntryStream.of(this.constantPool)
+                .filterValues(Objects::nonNull)
                 .mapKeyValue((index, ctas) -> index + " -> " + ctas.getConstantType().getFun().apply(ctas.getStructure()))
                 .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
     }
 
-    public String getAccessFlags() {
-        if (this.accessFlagsString == null && this.accessFlagsBytes != null) {
-            this.accessFlagsString = bytesToInt(this.accessFlagsBytes, 2) + " " + parseAccessFlags(this.accessFlagsBytes);
-        }
-        return this.accessFlagsString;
+    public String getAccessFlagsPretty() {
+        return Integer.toString(this.accessFlags, 2) + " " + parseAccessFlags(this.accessFlags);
     }
 
-    public String getThisClass() {
-        if (this.thisClassString == null && this.thisClassBytes != null) {
-            this.thisClassString = bytesToInt(this.thisClassBytes).toString();
-        }
-        return this.thisClassString;
-    }
-
-    public String getSuperClass() {
-        if (this.superClassString == null && this.superClassBytes != null) {
-            this.superClassString = bytesToInt(this.superClassBytes).toString();
-        }
-        return this.superClassString;
-    }
-
-    public String getInterfaceCount() {
-        if (this.interfaceCountString == null && this.interfaceCountBytes != null) {
-            this.interfaceCountString = bytesToInt(this.interfaceCountBytes).toString();
-        }
-        return this.interfaceCountString;
-    }
-
-    public String getInterfaces() {
-        if (this.interfacesString == null && this.interfaces != null) {
-            this.interfacesString = getInterfacesAsPrettyString(2);
-        }
-        return this.interfacesString;
+    public String getInterfacesPretty() {
+        return getInterfacesAsPrettyString(2);
     }
 
     private String getInterfacesAsPrettyString(int tabs) {
-        return "[\n" + "\t".repeat(tabs) + EntryStream.of(this.interfaces)
-                .mapKeyValue((index, i) -> index + " -> " + bytesToInt(i))
+        return "[\n" + "\t".repeat(tabs) + IntStreamEx.range(interfaces.length)
+                .boxed()
+                .map(index -> index + " -> " + interfaces[index])
                 .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
     }
 
-    public String getFieldsCount() {
-        if (this.fieldsCountString == null && this.fieldsCountBytes != null) {
-            this.fieldsCountString = bytesToInt(fieldsCountBytes).toString();
-        }
-        return this.fieldsCountString;
-    }
-
-    public String getFieldInfo() {
-        if (this.fieldsInfoString == null && this.fieldInfo != null) {
-            this.fieldsInfoString = getFieadInfoAsPrettyString(2);
-        }
-        return this.fieldsInfoString;
+    public String getFieldInfoPretty() {
+        return getFieadInfoAsPrettyString(2);
     }
 
     private String getFieadInfoAsPrettyString(int tabs) {
@@ -162,18 +77,8 @@ public class BytecodeClass {
                 .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
     }
 
-    public String getMethodCount() {
-        if (this.methodCountString == null && this.methodCountBytes != null) {
-            this.methodCountString = bytesToInt(this.methodCountBytes).toString();
-        }
-        return this.methodCountString;
-    }
-
-    public String getMethodInfo() {
-        if (this.methodInfoString == null && this.methodInfo != null) {
-            this.methodInfoString = getMethodInfoAsPrettyString(2);
-        }
-        return this.methodInfoString;
+    public String getMethodInfoPretty() {
+        return getMethodInfoAsPrettyString(2);
     }
 
     private String getMethodInfoAsPrettyString(int tabs) {
@@ -182,24 +87,37 @@ public class BytecodeClass {
                 .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
     }
 
+    public String getAttributeInfoPretty() {
+        return getAttributeInfoAsPrettyString(2);
+    }
+
+    private String getAttributeInfoAsPrettyString(int tabs) {
+        return "[\n" + "\t".repeat(tabs) + EntryStream.of(this.attributeInfo)
+            .mapKeyValue((index, ai) -> index + " -> " + ai.toPrettyString(tabs + 1))
+            .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
+    }
+
     @Override
     public String toString() {
         // todo: make toString representation prettier
+
         return "BytecodeClass {\n" +
-                "\tmagic = " + getMagic() + ",\n" +
+                "\tmagic = " + getMagicPretty() + ",\n" +
                 "\tminor_version = " + getMinorVersion() + ",\n" +
                 "\tmajor_version = " + getMajorVersion() + "\n" +
                 "\tconstant_pool_count = " + getConstantPoolCount() + "\n" +
-                "\tcp_info = " + getConstantPool() + "\n" +
-                "\taccess_flags = " + getAccessFlags() + "\n" +
+                "\tcp_info = " + getConstantPoolPretty() + "\n" +
+                "\taccess_flags = " + getAccessFlagsPretty() + "\n" +
                 "\tthis_class = " + getThisClass() + "\n" +
                 "\tsuper_class = " + getSuperClass() + "\n" +
                 "\tinterfaces_count = " + getInterfaceCount() + "\n" +
-                "\tinterfaces = " + getInterfaces() + "\n" +
+                "\tinterfaces = " + getInterfacesPretty() + "\n" +
                 "\tfields_count = " + getFieldsCount() + "\n" +
-                "\tfield_info = " + getFieldInfo() + "\n" +
+                "\tfield_info = " + getFieldInfoPretty() + "\n" +
                 "\tmethods_count = " + getMethodCount() + "\n" +
-                "\tmethod_info = " + getMethodInfo() + "\n" +
+                "\tmethod_info = " + getMethodInfoPretty() + "\n" +
+                "\tattributes_count = " + getAttributesCount() + "\n" +
+                "\tattribute_info = " + getAttributeInfoPretty() + "\n" +
                 '}';
     }
 }

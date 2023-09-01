@@ -6,21 +6,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.bytecodeparser.utility.Utils.bytesToInt;
-
 public class AttributeInfo {
-    int attributeNameIndex;
-    int attributeLength;
-    List<Integer> info;
+    private final short attributeNameIndex;
+    private final int attributeLength;
+    private final List<Integer> info;
 
     // todo: should accept constantPool to identify the attributes
     public AttributeInfo(DataInputStream dataInputStream) throws IOException {
-        this.attributeNameIndex = bytesToInt(dataInputStream.readNBytes(2));
-        this.attributeLength = bytesToInt(dataInputStream.readNBytes(4));
+        this.attributeNameIndex = dataInputStream.readShort();
+        this.attributeLength = dataInputStream.readInt();
         this.info = new ArrayList<>();
         for (int i = 0; i < attributeLength; i++) {
-            this.info.add(bytesToInt(dataInputStream.readNBytes(1)));
+            this.info.add((int) dataInputStream.readByte());
         }
+    }
+
+    public static AttributeInfo[] readAttributes(DataInputStream dataInputStream, int attributeCount)
+        throws IOException {
+        AttributeInfo[] attributeInfo = new AttributeInfo[attributeCount];
+        for (int i = 0; i < attributeCount; i++) {
+            attributeInfo[i] = new AttributeInfo(dataInputStream);
+        }
+        return attributeInfo;
     }
 
     public String toPrettyString(int tabs) {
