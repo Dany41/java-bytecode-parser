@@ -1,45 +1,66 @@
 package org.bytecodeparser.structures;
 
-import one.util.streamex.IntStreamEx;
+import org.bytecodeparser.exceptions.NoImplementationFoundForGivenAttributeName;
+import org.reflections.Reflections;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class AttributeInfo {
-    private final short attributeNameIndex;
-    private final int attributeLength;
-    private final byte[] info;
+public abstract class AttributeInfo {
+    protected final short attributeNameIndex;
+    protected final int attributeLength;
 
-    // todo: should accept constantPool to identify the attributes
-    public AttributeInfo(DataInputStream dataInputStream) throws IOException {
-        this.attributeNameIndex = dataInputStream.readShort();
-        this.attributeLength = dataInputStream.readInt();
-        this.info = new byte[attributeLength];
-        for (int i = 0; i < attributeLength; i++) {
-            this.info[i] = dataInputStream.readByte();
-        }
+    private static final Map<String, Class<?>> relatedAttributeClass = new Reflections("org.bytecodeparser.attribute")
+            .getSubTypesOf(AttributeInfo.class)
+            .stream()
+            .collect(Collectors.toMap(Class::getSimpleName, Function.identity()));;
+
+    protected AttributeInfo(short attributeNameIndex, int attributeLength) {
+        this.attributeNameIndex = attributeNameIndex;
+        this.attributeLength = attributeLength;
     }
 
+    // todo: delete; for now mocked to hold compatibility with other classes
     public static AttributeInfo[] readAttributes(DataInputStream dataInputStream, int attributeCount)
-        throws IOException {
-        AttributeInfo[] attributeInfo = new AttributeInfo[attributeCount];
+            throws IOException {
+        AttributeInfo[] attributeInfo = new AttributeInfo[]{};
         for (int i = 0; i < attributeCount; i++) {
-            attributeInfo[i] = new AttributeInfo(dataInputStream);
+            short attributeNameIndex = dataInputStream.readShort();
+            int attributeLength = dataInputStream.readInt();
+            byte[] info = new byte[attributeLength];
+            for (int j = 0; j < attributeLength; j++) {
+                info[j] = dataInputStream.readByte();
+            }
         }
         return attributeInfo;
     }
 
-    public String toPrettyString(int tabs) {
-        return "AttributeInfo {" +
-                "\n" + "\t".repeat(tabs) + "attribute_name_index = " + attributeNameIndex + ";" +
-                "\n" + "\t".repeat(tabs) + "attribute_length = " + attributeLength + ";" +
-                "\n" + "\t".repeat(tabs) + "attributeInfo = " +
-                        // todo: parse Info
-                IntStreamEx.of(info)
-                                .boxed()
-                                .map(Object::toString)
-                                .collect(Collectors.joining(",", "[", "]")) + ";" +
-                "\n" + "\t".repeat(tabs - 1) + '}';
+    public static AttributeInfo[] readAttributes(DataInputStream dataInputStream, int attributeCount, ConstantTypeAndStructure[] constantPool)
+        throws IOException {
+        AttributeInfo[] attributeInfo = new AttributeInfo[attributeCount];
+        for (int i = 0; i < attributeCount; i++) {
+            attributeInfo[i] = AttributeInfo.of(dataInputStream, constantPool);
+        }
+        return attributeInfo;
     }
+
+    private static AttributeInfo of(DataInputStream dataInputStream, ConstantTypeAndStructure[] constantPool) throws IOException {
+        short attributeNameIndex = dataInputStream.readShort();
+        int attributeLength = dataInputStream.readInt();
+        String attributeName = new String(constantPool[attributeNameIndex].getStructure());
+        Class<?> anAttributeClass = relatedAttributeClass.get(attributeName);
+        try {
+            Constructor<?> constructor = anAttributeClass.getConstructor(short.class, int.class, DataInputStream.class);
+            Object instance = constructor.newInstance(attributeNameIndex, attributeLength, dataInputStream);
+            return (AttributeInfo) instance;
+        } catch (Exception e) {
+            throw new NoImplementationFoundForGivenAttributeName(e);
+        }
+    }
+
+    public abstract String toPrettyString(int tabs);
 }

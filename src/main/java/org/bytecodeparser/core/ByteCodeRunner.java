@@ -46,7 +46,7 @@ public class ByteCodeRunner {
             bytecodeClass.setMethodCount(dataInputStream.readShort());
             bytecodeClass.setMethodInfo(readMethodInfo(dataInputStream, bytecodeClass.getMethodCount()));
             bytecodeClass.setAttributesCount(dataInputStream.readShort());
-            bytecodeClass.setAttributeInfo(readAttributes(dataInputStream, bytecodeClass.getAttributesCount()));
+            bytecodeClass.setAttributeInfo(readAttributes(dataInputStream, bytecodeClass.getAttributesCount(), bytecodeClass.getConstantPool()));
 
             System.out.println(bytecodeClass);
 //            Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
