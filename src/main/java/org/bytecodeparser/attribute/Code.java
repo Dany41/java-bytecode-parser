@@ -6,6 +6,8 @@ import org.bytecodeparser.annotation.ConsumeConstantPool;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.bytecodeparser.attribute.Code.ExceptionTable.readNExceptionTable;
 import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
@@ -38,7 +40,26 @@ public class Code extends AttributeInfo {
 
   @Override
   public String toPrettyString(int tabs) {
-    return "Code -> ";
+    return "Code {" +
+            "\n" + "\t".repeat(tabs) + "attribute_name_index = " + attributeNameIndex + ";" +
+            "\n" + "\t".repeat(tabs) + "attribute_length = " + attributeLength + ";" +
+            "\n" + "\t".repeat(tabs) + "max_stack = " + maxStack + ";" +
+            "\n" + "\t".repeat(tabs) + "max_locals = " + maxLocals + ";" +
+            "\n" + "\t".repeat(tabs) + "code_length = " + codeLength + ";" +
+            "\n" + "\t".repeat(tabs) + "code = " + Arrays.toString(code) + ";" +
+            "\n" + "\t".repeat(tabs) + "exception_table_length = " + exceptionTableLength + ";" +
+            "\n" + "\t".repeat(tabs) + "exception_table = " + Arrays.toString(exceptionTable) + ";" + // todo: implement
+            "\n" + "\t".repeat(tabs) + "attributes_count = " + attributesCount + ";" +
+            "\n" + "\t".repeat(tabs) + "attributes = " +
+              Arrays.stream(attributes)
+                .map(ai -> ai.toPrettyString(tabs + 3))
+                .collect(Collectors
+                .joining(
+                        "\n" + "\t".repeat(tabs + 2),
+                        "{\n" + "\t".repeat(tabs + 2),
+                        "\n" + "\t".repeat(tabs + 1) + "}"))
+            + ";" +
+            "\n" + "\t".repeat(tabs - 1) + '}';
   }
 
   static class ExceptionTable {

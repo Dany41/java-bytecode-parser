@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class AttributeInfo {
+public abstract class AttributeInfo implements PrettyPrintable {
     protected final short attributeNameIndex;
     protected final int attributeLength;
 
@@ -18,6 +18,4 @@ public abstract class AttributeInfo {
         this.attributeNameIndex = attributeNameIndex;
         this.attributeLength = attributeLength;
     }
-
-    public abstract String toPrettyString(int tabs);
 }
