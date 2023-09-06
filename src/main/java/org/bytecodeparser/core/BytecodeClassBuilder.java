@@ -113,7 +113,7 @@ public class BytecodeClassBuilder {
     public BytecodeClassBuilder fieldInfo(DataInputStream dataInputStream) throws IOException {
         this.fieldInfo = new FieldInfo[fieldsCount];
         for (int i = 0; i < fieldsCount; i++) {
-            fieldInfo[i] = new FieldInfo(dataInputStream);
+            fieldInfo[i] = new FieldInfo(dataInputStream, constantPool);
         }
         return this;
     }
@@ -125,7 +125,7 @@ public class BytecodeClassBuilder {
     public BytecodeClassBuilder methodInfo(DataInputStream dataInputStream) throws IOException {
         this.methodInfo =  new MethodInfo[fieldsCount];;
         for (int i = 0; i < methodCount; i++) {
-            methodInfo[i] = new MethodInfo(dataInputStream);
+            methodInfo[i] = new MethodInfo(dataInputStream, constantPool);
         }
         return this;
     }

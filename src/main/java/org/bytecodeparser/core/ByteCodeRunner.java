@@ -1,7 +1,5 @@
 package org.bytecodeparser.core;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.bytecodeparser.exceptions.ClassBytecodeParsingException;
 import org.bytecodeparser.structures.ConstantType;
 import org.bytecodeparser.structures.ConstantTypeAndStructure;
@@ -13,7 +11,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.bytecodeparser.structures.AttributeInfo.readAttributes;
+import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
 
 public class ByteCodeRunner {
 
@@ -42,9 +40,9 @@ public class ByteCodeRunner {
             bytecodeClass.setInterfaceCount(dataInputStream.readShort());
             bytecodeClass.setInterfaces(readShortArray(dataInputStream, bytecodeClass.getInterfaceCount()));
             bytecodeClass.setFieldsCount(dataInputStream.readShort());
-            bytecodeClass.setFieldInfo(readFieldInfo(dataInputStream, bytecodeClass.getFieldsCount()));
+            bytecodeClass.setFieldInfo(readFieldInfo(dataInputStream, bytecodeClass.getFieldsCount(), bytecodeClass.getConstantPool()));
             bytecodeClass.setMethodCount(dataInputStream.readShort());
-            bytecodeClass.setMethodInfo(readMethodInfo(dataInputStream, bytecodeClass.getMethodCount()));
+            bytecodeClass.setMethodInfo(readMethodInfo(dataInputStream, bytecodeClass.getMethodCount(), bytecodeClass.getConstantPool()));
             bytecodeClass.setAttributesCount(dataInputStream.readShort());
             bytecodeClass.setAttributeInfo(readAttributes(dataInputStream, bytecodeClass.getAttributesCount(), bytecodeClass.getConstantPool()));
 
@@ -76,18 +74,18 @@ public class ByteCodeRunner {
         return array;
     }
 
-    private static FieldInfo[] readFieldInfo(DataInputStream dataInputStream, int arraySize) throws IOException {
+    private static FieldInfo[] readFieldInfo(DataInputStream dataInputStream, int arraySize, ConstantTypeAndStructure[] constantPool) throws IOException {
         FieldInfo[] array = new FieldInfo[arraySize];
         for (int i = 0; i < arraySize; i++) {
-            array[i] = new FieldInfo(dataInputStream);
+            array[i] = new FieldInfo(dataInputStream, constantPool);
         }
         return array;
     }
 
-    private static MethodInfo[] readMethodInfo(DataInputStream dataInputStream, int arraySize) throws IOException {
+    private static MethodInfo[] readMethodInfo(DataInputStream dataInputStream, int arraySize, ConstantTypeAndStructure[] constantPool) throws IOException {
         MethodInfo[] array = new MethodInfo[arraySize];
         for (int i = 0; i < arraySize; i++) {
-            array[i] = new MethodInfo(dataInputStream);
+            array[i] = new MethodInfo(dataInputStream, constantPool);
         }
         return array;
     }

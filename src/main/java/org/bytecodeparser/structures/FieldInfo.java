@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static org.bytecodeparser.structures.AttributeInfo.readAttributes;
+import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
 
 public class FieldInfo {
     private final String accessFlags;
@@ -16,13 +16,13 @@ public class FieldInfo {
     private final short attributeCount;
     private final AttributeInfo[] attributeInfo;
 
-    public FieldInfo(DataInputStream dataInputStream) throws IOException {
+    public FieldInfo(DataInputStream dataInputStream, ConstantTypeAndStructure[] constantPool) throws IOException {
         short accessFlags = dataInputStream.readShort();
         this.accessFlags = Integer.toString(accessFlags, 2) + " " + FieldAccessFlags.parseAccessFlags(accessFlags);
         this.nameIndex = dataInputStream.readShort();
         this.descriptorIndex = dataInputStream.readShort();
         this.attributeCount = dataInputStream.readShort();
-        this.attributeInfo = readAttributes(dataInputStream, attributeCount);
+        this.attributeInfo = readAttributes(dataInputStream, attributeCount, constantPool);
     }
 
     public String toPrettyString(int tabs) {
