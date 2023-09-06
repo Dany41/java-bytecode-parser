@@ -1,12 +1,13 @@
 package org.bytecodeparser.attribute;
 
 import org.bytecodeparser.structures.AttributeInfo;
+import org.bytecodeparser.structures.ConstantTypeAndStructure;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 
 import static org.bytecodeparser.attribute.Code.ExceptionTable.readNExceptionTable;
-import static org.bytecodeparser.structures.AttributeInfo.readAttributes;
+import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
 
 public class Code {
   private final short attributeNameIndex;
@@ -20,7 +21,7 @@ public class Code {
   private final short attributesCount;
   private final AttributeInfo[] attributes;
 
-  public Code(DataInputStream dataInputStream) throws IOException {
+  public Code(DataInputStream dataInputStream, ConstantTypeAndStructure[] constantPool) throws IOException {
     this.attributeNameIndex = dataInputStream.readShort();
     this.attributeLength = dataInputStream.readInt();
     this.maxStack = dataInputStream.readShort();
@@ -30,10 +31,10 @@ public class Code {
     this.exceptionTableLength = dataInputStream.readShort();
     this.exceptionTable = readNExceptionTable(dataInputStream, exceptionTableLength);
     this.attributesCount = dataInputStream.readShort();
-    this.attributes = readAttributes(dataInputStream, attributesCount);
+    this.attributes = readAttributes(dataInputStream, attributesCount, constantPool);
   }
 
-  static class  ExceptionTable {
+  static class ExceptionTable {
     private final short startPc;
     private final short endPc;
     private final short handlerPc;
