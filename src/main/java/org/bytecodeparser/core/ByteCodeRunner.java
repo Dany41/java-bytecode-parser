@@ -16,14 +16,10 @@ import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
 public class ByteCodeRunner {
 
     public static void run(byte[] bytes) {
-        try {
-            BytecodeClass bytecodeClass = BytecodeClass.from(bytes);
+        BytecodeClass bytecodeClass = BytecodeClass.from(bytes);
 
-            System.out.println(bytecodeClass);
+        System.out.println(bytecodeClass);
 //            Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
 //            System.out.println(gson.toJson(bytecodeClass));
-        } catch (IOException e) {
-            throw new ClassBytecodeParsingException(e.getMessage(), e.getCause());
-        }
     }
 }
