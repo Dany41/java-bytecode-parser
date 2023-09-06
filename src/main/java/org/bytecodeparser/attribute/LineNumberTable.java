@@ -1,19 +1,23 @@
 package org.bytecodeparser.attribute;
 
+import org.bytecodeparser.structures.AttributeInfo;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class LineNumberTable {
-  private final short attributeNameIndex;
-  private final int attributeLength;
+public class LineNumberTable extends AttributeInfo {
   private final short lineNumberTableLength;
   private final LineNumber[] lineNumberTable;
 
-  public LineNumberTable(DataInputStream dataInputStream) throws IOException {
-    this.attributeNameIndex = dataInputStream.readShort();
-    this.attributeLength = dataInputStream.readInt();
+  public LineNumberTable(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
+    super(attributeNameIndex, attributeLength);
     this.lineNumberTableLength = dataInputStream.readShort();
     this.lineNumberTable = LineNumber.readNClassInfo(dataInputStream, lineNumberTableLength);
+  }
+
+  @Override
+  public String toPrettyString(int tabs) {
+    return "LineNumberTable -> ";
   }
 
   static class LineNumber {
