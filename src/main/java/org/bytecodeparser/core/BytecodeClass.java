@@ -5,15 +5,18 @@ import lombok.Getter;
 import lombok.Setter;
 import one.util.streamex.EntryStream;
 import one.util.streamex.IntStreamEx;
-import org.bytecodeparser.structures.AttributeInfo;
-import org.bytecodeparser.structures.ConstantTypeAndStructure;
-import org.bytecodeparser.structures.FieldInfo;
-import org.bytecodeparser.structures.MethodInfo;
+import org.bytecodeparser.structures.*;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.bytecodeparser.accessflags.ClassAccessFlags.parseAccessFlags;
+import static org.bytecodeparser.core.ByteCodeRunner.*;
+import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
+import static org.bytecodeparser.utility.Utils.readShortArray;
 
 // todo: work on annotation processing to reduce boilerplate for [field]Bytes + [field]String (s) below
 @Getter
@@ -36,6 +39,37 @@ public class BytecodeClass {
     private MethodInfo[] methodInfo;
     private short attributesCount;
     private AttributeInfo[] attributeInfo;
+
+    private static final ConstantType[] TAG_TO_TYPE;
+    static {
+        // CONSTANT_InvokeDynamic has max 18 tag int value
+        int maxTag = 18;
+        ConstantType[] constantTypes = new ConstantType[maxTag + 1];
+        Arrays.stream(ConstantType.values())
+                .forEach(ct -> constantTypes[ct.getTag()] = ct);
+        TAG_TO_TYPE = constantTypes;
+    }
+
+    public static BytecodeClass from(DataInputStream dataInputStream) throws IOException {
+        BytecodeClass bytecodeClass = new BytecodeClass();
+        bytecodeClass.setMagic(dataInputStream.readInt());
+        bytecodeClass.setMinorVersion(dataInputStream.readShort());
+        bytecodeClass.setMajorVersion(dataInputStream.readShort());
+        bytecodeClass.setConstantPoolCount(dataInputStream.readShort());
+        bytecodeClass.setConstantPool(readConstantPool(dataInputStream, bytecodeClass.getConstantPoolCount()));
+        bytecodeClass.setAccessFlags(dataInputStream.readShort());
+        bytecodeClass.setThisClass(dataInputStream.readShort());
+        bytecodeClass.setSuperClass(dataInputStream.readShort());
+        bytecodeClass.setInterfaceCount(dataInputStream.readShort());
+        bytecodeClass.setInterfaces(readShortArray(dataInputStream, bytecodeClass.getInterfaceCount()));
+        bytecodeClass.setFieldsCount(dataInputStream.readShort());
+        bytecodeClass.setFieldInfo(readFieldInfo(dataInputStream, bytecodeClass.getFieldsCount(), bytecodeClass.getConstantPool()));
+        bytecodeClass.setMethodCount(dataInputStream.readShort());
+        bytecodeClass.setMethodInfo(readMethodInfo(dataInputStream, bytecodeClass.getMethodCount(), bytecodeClass.getConstantPool()));
+        bytecodeClass.setAttributesCount(dataInputStream.readShort());
+        bytecodeClass.setAttributeInfo(readAttributes(dataInputStream, bytecodeClass.getAttributesCount(), bytecodeClass.getConstantPool()));
+        return bytecodeClass;
+    }
 
     public String getMagicPretty() {
         return Integer.toHexString(magic);
@@ -100,7 +134,6 @@ public class BytecodeClass {
     @Override
     public String toString() {
         // todo: make toString representation prettier
-
         return "BytecodeClass {\n" +
                 "\tmagic = " + getMagicPretty() + ",\n" +
                 "\tminor_version = " + getMinorVersion() + ",\n" +
@@ -119,5 +152,41 @@ public class BytecodeClass {
                 "\tattributes_count = " + getAttributesCount() + "\n" +
                 "\tattribute_info = " + getAttributeInfoPretty() + "\n" +
                 '}';
+    }
+
+    private static ConstantTypeAndStructure[] readConstantPool(DataInputStream dataInputStream,
+                                                               int constantPoolCount) throws IOException {
+        ConstantTypeAndStructure[] constantPool = new ConstantTypeAndStructure[constantPoolCount];
+        for (int i = 1; i < constantPoolCount; i++) {
+            byte tag = dataInputStream.readByte();
+
+            ConstantType constantType = TAG_TO_TYPE[tag];
+            constantPool[i] = new ConstantTypeAndStructure(constantType, constantType.read(dataInputStream));
+        }
+        return constantPool;
+    }
+
+    private static short[] readShortArray(DataInputStream dataInputStream, int arraySize) throws IOException {
+        short[] array = new short[arraySize];
+        for (int i = 0; i < arraySize; i++) {
+            array[i] = dataInputStream.readShort();
+        }
+        return array;
+    }
+
+    private static FieldInfo[] readFieldInfo(DataInputStream dataInputStream, int arraySize, ConstantTypeAndStructure[] constantPool) throws IOException {
+        FieldInfo[] array = new FieldInfo[arraySize];
+        for (int i = 0; i < arraySize; i++) {
+            array[i] = new FieldInfo(dataInputStream, constantPool);
+        }
+        return array;
+    }
+
+    private static MethodInfo[] readMethodInfo(DataInputStream dataInputStream, int arraySize, ConstantTypeAndStructure[] constantPool) throws IOException {
+        MethodInfo[] array = new MethodInfo[arraySize];
+        for (int i = 0; i < arraySize; i++) {
+            array[i] = new MethodInfo(dataInputStream, constantPool);
+        }
+        return array;
     }
 }
