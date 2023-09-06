@@ -1,19 +1,23 @@
 package org.bytecodeparser.attribute;
 
+import org.bytecodeparser.structures.AttributeInfo;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class LocalVariableTable {
-  private final short attributeNameIndex;
-  private final int attributeLength;
+public class LocalVariableTable extends AttributeInfo {
   private final short localVariableTableLength;
   private final LocalVariable[] localVariableTable;
 
-  public LocalVariableTable(DataInputStream dataInputStream) throws IOException {
-    this.attributeNameIndex = dataInputStream.readShort();
-    this.attributeLength = dataInputStream.readInt();
+  public LocalVariableTable(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
+    super(attributeNameIndex, attributeLength);
     this.localVariableTableLength = dataInputStream.readShort();
     this.localVariableTable = LocalVariable.readNLocalVariable(dataInputStream, localVariableTableLength);
+  }
+
+  @Override
+  public String toPrettyString(int tabs) {
+    return "LocalVariableTable -> ";
   }
 
   static class LocalVariable {

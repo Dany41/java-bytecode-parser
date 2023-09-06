@@ -1,5 +1,7 @@
 package org.bytecodeparser.utility;
 
+import lombok.val;
+import org.bytecodeparser.annotation.ConsumeConstantPool;
 import org.bytecodeparser.exceptions.NoImplementationFoundForGivenAttributeName;
 import org.bytecodeparser.structures.AttributeInfo;
 import org.bytecodeparser.structures.ConstantTypeAndStructure;
@@ -39,8 +41,14 @@ public class AttributeInfoUtils {
         String attributeName = new String(constantPool[attributeNameIndex].getStructure());
         Class<?> anAttributeClass = relatedAttributeClass.get(attributeName);
         try {
-            Constructor<?> constructor = anAttributeClass.getConstructor(short.class, int.class, DataInputStream.class);
-            Object instance = constructor.newInstance(attributeNameIndex, attributeLength, dataInputStream);
+            boolean consumeCP = anAttributeClass.isAnnotationPresent(ConsumeConstantPool.class);
+            Object instance = consumeCP
+                    ? anAttributeClass
+                        .getConstructor(short.class, int.class, DataInputStream.class, ConstantTypeAndStructure[].class)
+                        .newInstance(attributeNameIndex, attributeLength, dataInputStream, constantPool)
+                    : anAttributeClass
+                        .getConstructor(short.class, int.class, DataInputStream.class)
+                        .newInstance(attributeNameIndex, attributeLength, dataInputStream);
             return (AttributeInfo) instance;
         } catch (IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException |
                  InstantiationException | IllegalArgumentException | NullPointerException e) {
