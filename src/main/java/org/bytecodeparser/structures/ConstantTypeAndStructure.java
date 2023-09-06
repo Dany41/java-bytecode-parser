@@ -6,4 +6,5 @@ import lombok.Value;
 public class ConstantTypeAndStructure {
     ConstantType constantType;
     byte[] structure;
+
 }
