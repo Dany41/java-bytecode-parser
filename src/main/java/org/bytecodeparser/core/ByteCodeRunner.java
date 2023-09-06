@@ -16,9 +16,8 @@ import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
 public class ByteCodeRunner {
 
     public static void run(byte[] bytes) {
-        DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
         try {
-            BytecodeClass bytecodeClass = BytecodeClass.from(dataInputStream);
+            BytecodeClass bytecodeClass = BytecodeClass.from(bytes);
 
             System.out.println(bytecodeClass);
 //            Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();

@@ -7,6 +7,7 @@ import one.util.streamex.EntryStream;
 import one.util.streamex.IntStreamEx;
 import org.bytecodeparser.structures.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,7 +19,6 @@ import static org.bytecodeparser.core.ByteCodeRunner.*;
 import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
 import static org.bytecodeparser.utility.Utils.readShortArray;
 
-// todo: work on annotation processing to reduce boilerplate for [field]Bytes + [field]String (s) below
 @Getter
 @Setter(AccessLevel.PROTECTED)
 public class BytecodeClass {
@@ -50,7 +50,8 @@ public class BytecodeClass {
         TAG_TO_TYPE = constantTypes;
     }
 
-    public static BytecodeClass from(DataInputStream dataInputStream) throws IOException {
+    public static BytecodeClass from(byte[] bytes) throws IOException {
+        DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
         BytecodeClass bytecodeClass = new BytecodeClass();
         bytecodeClass.setMagic(dataInputStream.readInt());
         bytecodeClass.setMinorVersion(dataInputStream.readShort());
