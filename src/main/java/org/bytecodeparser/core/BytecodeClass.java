@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import one.util.streamex.EntryStream;
 import one.util.streamex.IntStreamEx;
+import org.bytecodeparser.exceptions.ClassBytecodeParsingException;
 import org.bytecodeparser.structures.*;
 
 import java.io.ByteArrayInputStream;
@@ -50,26 +51,30 @@ public class BytecodeClass {
         TAG_TO_TYPE = constantTypes;
     }
 
-    public static BytecodeClass from(byte[] bytes) throws IOException {
+    public static BytecodeClass from(byte[] bytes) {
         DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
         BytecodeClass bytecodeClass = new BytecodeClass();
-        bytecodeClass.setMagic(dataInputStream.readInt());
-        bytecodeClass.setMinorVersion(dataInputStream.readShort());
-        bytecodeClass.setMajorVersion(dataInputStream.readShort());
-        bytecodeClass.setConstantPoolCount(dataInputStream.readShort());
-        bytecodeClass.setConstantPool(readConstantPool(dataInputStream, bytecodeClass.getConstantPoolCount()));
-        bytecodeClass.setAccessFlags(dataInputStream.readShort());
-        bytecodeClass.setThisClass(dataInputStream.readShort());
-        bytecodeClass.setSuperClass(dataInputStream.readShort());
-        bytecodeClass.setInterfaceCount(dataInputStream.readShort());
-        bytecodeClass.setInterfaces(readShortArray(dataInputStream, bytecodeClass.getInterfaceCount()));
-        bytecodeClass.setFieldsCount(dataInputStream.readShort());
-        bytecodeClass.setFieldInfo(readFieldInfo(dataInputStream, bytecodeClass.getFieldsCount(), bytecodeClass.getConstantPool()));
-        bytecodeClass.setMethodCount(dataInputStream.readShort());
-        bytecodeClass.setMethodInfo(readMethodInfo(dataInputStream, bytecodeClass.getMethodCount(), bytecodeClass.getConstantPool()));
-        bytecodeClass.setAttributesCount(dataInputStream.readShort());
-        bytecodeClass.setAttributeInfo(readAttributes(dataInputStream, bytecodeClass.getAttributesCount(), bytecodeClass.getConstantPool()));
-        return bytecodeClass;
+        try {
+            bytecodeClass.setMagic(dataInputStream.readInt());
+            bytecodeClass.setMinorVersion(dataInputStream.readShort());
+            bytecodeClass.setMajorVersion(dataInputStream.readShort());
+            bytecodeClass.setConstantPoolCount(dataInputStream.readShort());
+            bytecodeClass.setConstantPool(readConstantPool(dataInputStream, bytecodeClass.getConstantPoolCount()));
+            bytecodeClass.setAccessFlags(dataInputStream.readShort());
+            bytecodeClass.setThisClass(dataInputStream.readShort());
+            bytecodeClass.setSuperClass(dataInputStream.readShort());
+            bytecodeClass.setInterfaceCount(dataInputStream.readShort());
+            bytecodeClass.setInterfaces(readShortArray(dataInputStream, bytecodeClass.getInterfaceCount()));
+            bytecodeClass.setFieldsCount(dataInputStream.readShort());
+            bytecodeClass.setFieldInfo(readFieldInfo(dataInputStream, bytecodeClass.getFieldsCount(), bytecodeClass.getConstantPool()));
+            bytecodeClass.setMethodCount(dataInputStream.readShort());
+            bytecodeClass.setMethodInfo(readMethodInfo(dataInputStream, bytecodeClass.getMethodCount(), bytecodeClass.getConstantPool()));
+            bytecodeClass.setAttributesCount(dataInputStream.readShort());
+            bytecodeClass.setAttributeInfo(readAttributes(dataInputStream, bytecodeClass.getAttributesCount(), bytecodeClass.getConstantPool()));
+            return bytecodeClass;
+        } catch (IOException e) {
+            throw new ClassBytecodeParsingException(e.getMessage(), e.getCause());
+        }
     }
 
     public String getMagicPretty() {
