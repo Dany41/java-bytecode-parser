@@ -1,12 +1,9 @@
 package org.bytecodeparser.attribute;
 
 import org.bytecodeparser.structures.AttributeInfo;
-import org.bytecodeparser.structures.PrettyPrintable;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class LineNumberTable extends AttributeInfo {
   private final short lineNumberTableLength;
@@ -18,25 +15,7 @@ public class LineNumberTable extends AttributeInfo {
     this.lineNumberTable = LineNumber.readNClassInfo(dataInputStream, lineNumberTableLength);
   }
 
-  @Override
-  public String toPrettyString(int tabs) {
-    return "LineNumberTable {" +
-            "\n" + "\t".repeat(tabs) + "attribute_name_index = " + attributeNameIndex + ";" +
-            "\n" + "\t".repeat(tabs) + "attribute_length = " + attributeLength + ";" +
-            "\n" + "\t".repeat(tabs) + "line_number_table_length = " + lineNumberTableLength + ";" +
-            "\n" + "\t".repeat(tabs) + "line_number_table = " +
-            Arrays.stream(lineNumberTable)
-                    .map(ln -> ln.toPrettyString(tabs + 3))
-                    .collect(Collectors
-                            .joining(
-                                    "\n" + "\t".repeat(tabs + 2),
-                                    "{\n" + "\t".repeat(tabs + 2),
-                                    "\n" + "\t".repeat(tabs + 1) + "}"))
-            + ";" +
-            "\n" + "\t".repeat(tabs - 1) + '}';
-  }
-
-  static class LineNumber implements PrettyPrintable {
+  static class LineNumber {
     private final short startPc;
     private final short lineNumber;
 
@@ -52,14 +31,6 @@ public class LineNumberTable extends AttributeInfo {
     public LineNumber(DataInputStream dataInputStream) throws IOException {
       this.startPc = dataInputStream.readShort();
       this.lineNumber = dataInputStream.readShort();
-    }
-
-    @Override
-    public String toPrettyString(int tabs) {
-      return "LineNumber {" +
-              "\n" + "\t".repeat(tabs) + "start_pc = " + startPc + ";" +
-              "\n" + "\t".repeat(tabs) + "line_number = " + lineNumber + ";" +
-              "\n" + "\t".repeat(tabs - 1) + '}';
     }
   }
 }
