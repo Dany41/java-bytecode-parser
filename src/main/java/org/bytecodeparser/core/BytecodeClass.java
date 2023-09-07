@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import one.util.streamex.EntryStream;
 import one.util.streamex.IntStreamEx;
+import org.bytecodeparser.print.CustomPrettyPrint;
 import org.bytecodeparser.exceptions.ClassBytecodeParsingException;
 import org.bytecodeparser.structures.*;
 
@@ -16,19 +17,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.bytecodeparser.accessflags.ClassAccessFlags.parseAccessFlags;
-import static org.bytecodeparser.core.ByteCodeRunner.*;
 import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
-import static org.bytecodeparser.utility.Utils.readShortArray;
 
 @Getter
 @Setter(AccessLevel.PROTECTED)
 public class BytecodeClass {
-
+    @CustomPrettyPrint
     private int magic;
     private short minorVersion;
     private short majorVersion;
     private short constantPoolCount;
     private ConstantTypeAndStructure[] constantPool;
+    @CustomPrettyPrint
     private short accessFlags;
     private short thisClass;
     private short superClass;
@@ -76,6 +76,16 @@ public class BytecodeClass {
             throw new ClassBytecodeParsingException(e.getMessage(), e.getCause());
         }
     }
+
+  @SuppressWarnings("unused")
+  private String magicPrettyPrint() {
+    return getMagicPretty();
+  }
+
+  @SuppressWarnings("unused")
+  private String accessFlagsPrettyPrint() {
+    return getAccessFlagsPretty();
+  }
 
     public String getMagicPretty() {
         return Integer.toHexString(magic);
@@ -137,6 +147,7 @@ public class BytecodeClass {
             .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
     }
 
+    // todo: replace implementation with PrettyPrintUtils#prettyPrint
     @Override
     public String toString() {
         // todo: make toString representation prettier
