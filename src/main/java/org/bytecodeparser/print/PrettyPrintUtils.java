@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,8 +44,10 @@ public class PrettyPrintUtils {
     rows.add(new Line(clazz.getSimpleName() + " {", tabs));
 
     Field[] fields = clazz.getDeclaredFields();
-    for (int i = 0; i < fields.length; i++) {
-      Field field = fields[i];
+    for (Field field : fields) {
+      if (Modifier.isStatic(field.getModifiers())) {
+        continue;
+      }
       Class<?> type = field.getType();
       List<Line> lines = new ArrayList<>();
       if (type.isPrimitive() || isBoxed(type)) {
@@ -60,12 +63,11 @@ public class PrettyPrintUtils {
         }
       }
       Line.prependFirst(lines, camelToSnake(field.getName()) + " = ");
-      if (i < fields.length - 1) {
-        Line.appendLast(lines, ",");
-      }
+      Line.appendLast(lines, ",");
 
       rows.addAll(lines);
     }
+    Line.stripSuffixLast(rows, ",");
     rows.add(new Line("}", tabs));
 
     return rows;
@@ -174,12 +176,22 @@ public class PrettyPrintUtils {
       data = data + str;
     }
 
+    public void stripSuffix(String suffix) {
+      if (data != null && suffix != null && data.endsWith(suffix)) {
+        data = data.substring(0, data.length() - suffix.length());
+      }
+    }
+
     public static void prependFirst(List<Line> lines, String str) {
       lines.get(0).prepend(str);
     }
 
     public static void appendLast(List<Line> lines, String str) {
       lines.get(lines.size() - 1).append(str);
+    }
+
+    public static void stripSuffixLast(List<Line> lines, String suffix) {
+      lines.get(lines.size() - 1).stripSuffix(suffix);
     }
   }
 }
