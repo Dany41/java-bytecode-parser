@@ -3,18 +3,15 @@ package org.bytecodeparser.core;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import one.util.streamex.EntryStream;
-import one.util.streamex.IntStreamEx;
-import org.bytecodeparser.print.CustomPrettyPrint;
 import org.bytecodeparser.exceptions.ClassBytecodeParsingException;
+import org.bytecodeparser.print.CustomPrettyPrint;
+import org.bytecodeparser.print.PrettyPrintUtils;
 import org.bytecodeparser.structures.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.bytecodeparser.accessflags.ClassAccessFlags.parseAccessFlags;
 import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
@@ -77,98 +74,27 @@ public class BytecodeClass {
         }
     }
 
-  @SuppressWarnings("unused")
-  private String magicPrettyPrint() {
-    return getMagicPretty();
-  }
+    @SuppressWarnings("unused")
+    private String magicPrettyPrint() {
+        return getMagicPretty();
+    }
 
-  @SuppressWarnings("unused")
-  private String accessFlagsPrettyPrint() {
-    return getAccessFlagsPretty();
-  }
+    @SuppressWarnings("unused")
+    private String accessFlagsPrettyPrint() {
+        return getAccessFlagsPretty();
+    }
 
     public String getMagicPretty() {
         return Integer.toHexString(magic);
-    }
-
-    public String getConstantPoolPretty() {
-        return getConstantPoolAsPrettyString(2);
-    }
-
-    private String getConstantPoolAsPrettyString(int tabs) {
-        return "[\n" + "\t".repeat(tabs) + EntryStream.of(this.constantPool)
-                .filterValues(Objects::nonNull)
-                .mapKeyValue((index, ctas) -> index + " -> " + ctas.getConstantType().getFun().apply(ctas.getStructure()))
-                .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
     }
 
     public String getAccessFlagsPretty() {
         return Integer.toString(this.accessFlags, 2) + " " + parseAccessFlags(this.accessFlags);
     }
 
-    public String getInterfacesPretty() {
-        return getInterfacesAsPrettyString(2);
-    }
-
-    private String getInterfacesAsPrettyString(int tabs) {
-        return "[\n" + "\t".repeat(tabs) + IntStreamEx.range(interfaces.length)
-                .boxed()
-                .map(index -> index + " -> " + interfaces[index])
-                .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
-    }
-
-    public String getFieldInfoPretty() {
-        return getFieadInfoAsPrettyString(2);
-    }
-
-    private String getFieadInfoAsPrettyString(int tabs) {
-        return "[\n" + "\t".repeat(tabs) + EntryStream.of(this.fieldInfo)
-                .mapKeyValue((index, fi) -> index + " -> " + fi.toPrettyString(tabs + 1))
-                .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
-    }
-
-    public String getMethodInfoPretty() {
-        return getMethodInfoAsPrettyString(2);
-    }
-
-    private String getMethodInfoAsPrettyString(int tabs) {
-        return "[\n" + "\t".repeat(tabs) + EntryStream.of(this.methodInfo)
-                .mapKeyValue((index, mi) -> index + " -> " + mi.toPrettyString(tabs + 1))
-                .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
-    }
-
-    public String getAttributeInfoPretty() {
-        return getAttributeInfoAsPrettyString(2);
-    }
-
-    private String getAttributeInfoAsPrettyString(int tabs) {
-        return "[\n" + "\t".repeat(tabs) + EntryStream.of(this.attributeInfo)
-            .mapKeyValue((index, ai) -> index + " -> " + ai.toPrettyString(tabs + 1))
-            .collect(Collectors.joining("\n" + "\t".repeat(tabs))) + "\n" + "\t".repeat(tabs - 1) + "]";
-    }
-
-    // todo: replace implementation with PrettyPrintUtils#prettyPrint
     @Override
     public String toString() {
-        // todo: make toString representation prettier
-        return "BytecodeClass {\n" +
-                "\tmagic = " + getMagicPretty() + ",\n" +
-                "\tminor_version = " + getMinorVersion() + ",\n" +
-                "\tmajor_version = " + getMajorVersion() + "\n" +
-                "\tconstant_pool_count = " + getConstantPoolCount() + "\n" +
-                "\tcp_info = " + getConstantPoolPretty() + "\n" +
-                "\taccess_flags = " + getAccessFlagsPretty() + "\n" +
-                "\tthis_class = " + getThisClass() + "\n" +
-                "\tsuper_class = " + getSuperClass() + "\n" +
-                "\tinterfaces_count = " + getInterfaceCount() + "\n" +
-                "\tinterfaces = " + getInterfacesPretty() + "\n" +
-                "\tfields_count = " + getFieldsCount() + "\n" +
-                "\tfield_info = " + getFieldInfoPretty() + "\n" +
-                "\tmethods_count = " + getMethodCount() + "\n" +
-                "\tmethod_info = " + getMethodInfoPretty() + "\n" +
-                "\tattributes_count = " + getAttributesCount() + "\n" +
-                "\tattribute_info = " + getAttributeInfoPretty() + "\n" +
-                '}';
+        return PrettyPrintUtils.prettyPrint(this);
     }
 
     private static ConstantTypeAndStructure[] readConstantPool(DataInputStream dataInputStream,
