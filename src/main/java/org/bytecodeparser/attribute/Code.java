@@ -1,11 +1,14 @@
 package org.bytecodeparser.attribute;
 
+import org.bytecodeparser.instruction.Instruction;
+import org.bytecodeparser.instruction.InstructionReader;
 import org.bytecodeparser.structures.AttributeInfo;
 import org.bytecodeparser.structures.ConstantTypeAndStructure;
 import org.bytecodeparser.annotation.ConsumeConstantPool;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static org.bytecodeparser.attribute.Code.ExceptionTable.readNExceptionTable;
 import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
@@ -15,7 +18,7 @@ public class Code extends AttributeInfo {
   private final short maxStack;
   private final short maxLocals;
   private final int codeLength;
-  private final byte[] code;
+  private final List<Instruction> code;
   private final short exceptionTableLength;
   private final ExceptionTable[] exceptionTable;
   private final short attributesCount;
@@ -26,10 +29,7 @@ public class Code extends AttributeInfo {
     this.maxStack = dataInputStream.readShort();
     this.maxLocals = dataInputStream.readShort();
     this.codeLength = dataInputStream.readInt();
-    this.code = new byte[this.codeLength];
-    for (int i = 0; i < codeLength; i++) {
-      code[i] = dataInputStream.readByte();
-    }
+    this.code = InstructionReader.read(dataInputStream.readNBytes(codeLength));
     this.exceptionTableLength = dataInputStream.readShort();
     this.exceptionTable = readNExceptionTable(dataInputStream, exceptionTableLength);
     this.attributesCount = dataInputStream.readShort();

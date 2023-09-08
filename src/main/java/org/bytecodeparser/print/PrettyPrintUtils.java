@@ -9,7 +9,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,8 @@ public class PrettyPrintUtils {
         Object value = getFieldValue(obj, field);
         if (type.isArray()) {
           lines.addAll(prettyPrintArray(value, tabs + 1));
+        } else if (Collection.class.isAssignableFrom(type)) {
+          lines.addAll(prettyPrintCollection(value, tabs + 1));
         } else if (type.isEnum()) {
           lines.add(new Line(value.toString(), tabs + 1));
         } else {
@@ -109,6 +113,24 @@ public class PrettyPrintUtils {
       }
       rows.addAll(lines);
     }
+    rows.add(new Line("]", tabs));
+    return rows;
+  }
+
+  private static List<Line> prettyPrintCollection(Object coll, int tabs) {
+    Collection<?> collection = (Collection<?>) coll;
+    if ( collection.isEmpty()) {
+      return Collections.singletonList(new Line("[]", tabs));
+    }
+    ArrayList<Line> rows = new ArrayList<>();
+    rows.add(new Line("[", tabs));
+    collection
+        .forEach(element -> {
+          rows.addAll(prettyPrintLines(element, tabs + 1));
+          Line.appendLast(rows, ",");
+        });
+    Line.stripSuffixLast(rows, ",");
+
     rows.add(new Line("]", tabs));
     return rows;
   }
