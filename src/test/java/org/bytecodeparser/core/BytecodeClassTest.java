@@ -5,10 +5,6 @@ import org.bytecodeparser.files.BytecodeFileResolverInResources;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-
 import static org.bytecodeparser.assertions.BytecodeClassAssertion.assertThat;
 
 class BytecodeClassTest {
@@ -22,9 +18,12 @@ class BytecodeClassTest {
     }
 
     @Test
-    void fromShouldCreateValidBytecodeClassObjectFromPersonClass() {
+    void fromShouldCreateBytecodeClassObjectWithValidConstantFieldsFromPersonClass() {
         BytecodeClass personBytecodeClass = BytecodeClass.from(personClassBytes);
 
-        assertThat(personBytecodeClass).cafebabed();
+        assertThat(personBytecodeClass)
+                .cafebabed()
+                .hasVersion(61.0)
+                .cpCountIs((short) 24);
     }
 }
