@@ -9,7 +9,8 @@ import org.bytecodeparser.constant.ConstantType;
 import org.bytecodeparser.exceptions.ClassBytecodeParsingException;
 import org.bytecodeparser.print.CustomPrettyPrint;
 import org.bytecodeparser.print.PrettyPrintUtils;
-import org.bytecodeparser.structures.*;
+import org.bytecodeparser.structures.FieldInfo;
+import org.bytecodeparser.structures.MethodInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

@@ -1,16 +1,16 @@
 package org.bytecodeparser.attribute;
 
+import org.bytecodeparser.annotation.ConsumeConstantPool;
 import org.bytecodeparser.constant.ConstantType;
 import org.bytecodeparser.instruction.Instruction;
 import org.bytecodeparser.instruction.InstructionReader;
-import org.bytecodeparser.annotation.ConsumeConstantPool;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static org.bytecodeparser.attribute.Code.ExceptionTable.readNExceptionTable;
 import static org.bytecodeparser.attribute.AttributeInfoReader.read;
+import static org.bytecodeparser.attribute.Code.ExceptionTable.readNExceptionTable;
 
 @ConsumeConstantPool
 public class Code extends AttributeInfo {

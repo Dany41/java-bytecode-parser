@@ -6,7 +6,6 @@ import org.reflections.Reflections;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ConstantPoolReader {
     private static final Map<Byte, Class<? extends ConstantType>> tagToConstantType;

@@ -3,17 +3,12 @@ package org.bytecodeparser;
 import org.bytecodeparser.core.BytecodeClass;
 import org.bytecodeparser.files.BytecodeFileResolver;
 import org.bytecodeparser.files.BytecodeFileResolverInResources;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
