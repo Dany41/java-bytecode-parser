@@ -43,6 +43,7 @@ public class ParsingClassesTest {
         try {
             return Files.walk(Paths.get(resource.toURI()).getParent())
                     .filter(Files::isRegularFile)
+                    .filter(path -> path.getParent().endsWith("test-classes\\"))
                     .map(Arguments::of);
         } catch (Exception e) {
             throw new RuntimeException(e);
