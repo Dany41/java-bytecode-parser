@@ -25,8 +25,11 @@ public class ConstantPoolReader {
             byte tag = dataInputStream.readByte();
             try {
                 constantPool[i] = tagToConstantType.get(tag).getDeclaredConstructor(DataInputStream.class).newInstance(dataInputStream);
-            } catch (Exception e) {
+            } catch (NullPointerException e) {
                 throw new RuntimeException("Couldn't create instance of Constant with tag " + tag, e);
+            } catch (Exception e) {
+                throw new RuntimeException("Couldn't create instance of Constant with tag " + tag +
+                        " [" + tagToConstantType.get(tag).getSimpleName() + "]", e);
             }
         }
         return constantPool;
