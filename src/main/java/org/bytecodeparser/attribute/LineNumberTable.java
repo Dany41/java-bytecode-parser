@@ -1,7 +1,5 @@
 package org.bytecodeparser.attribute;
 
-import org.bytecodeparser.structures.AttributeInfo;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 

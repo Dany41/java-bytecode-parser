@@ -1,9 +1,8 @@
 package org.bytecodeparser.attribute;
 
+import org.bytecodeparser.constant.ConstantType;
 import org.bytecodeparser.instruction.Instruction;
 import org.bytecodeparser.instruction.InstructionReader;
-import org.bytecodeparser.structures.AttributeInfo;
-import org.bytecodeparser.structures.ConstantTypeAndStructure;
 import org.bytecodeparser.annotation.ConsumeConstantPool;
 
 import java.io.DataInputStream;
@@ -11,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.bytecodeparser.attribute.Code.ExceptionTable.readNExceptionTable;
-import static org.bytecodeparser.utility.AttributeInfoUtils.readAttributes;
+import static org.bytecodeparser.attribute.AttributeInfoReader.read;
 
 @ConsumeConstantPool
 public class Code extends AttributeInfo {
@@ -24,7 +23,7 @@ public class Code extends AttributeInfo {
   private final short attributesCount;
   private final AttributeInfo[] attributes;
 
-  public Code(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream, ConstantTypeAndStructure[] constantPool) throws IOException {
+  public Code(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream, ConstantType[] constantPool) throws IOException {
     super(attributeNameIndex, attributeLength);
     this.maxStack = dataInputStream.readShort();
     this.maxLocals = dataInputStream.readShort();
@@ -33,7 +32,7 @@ public class Code extends AttributeInfo {
     this.exceptionTableLength = dataInputStream.readShort();
     this.exceptionTable = readNExceptionTable(dataInputStream, exceptionTableLength);
     this.attributesCount = dataInputStream.readShort();
-    this.attributes = readAttributes(dataInputStream, attributesCount, constantPool);
+    this.attributes = read(dataInputStream, attributesCount, constantPool);
   }
 
   static class ExceptionTable {

@@ -1,4 +1,4 @@
-package org.bytecodeparser.structures;
+package org.bytecodeparser.attribute;
 
 public abstract class AttributeInfo {
     protected final short attributeNameIndex;

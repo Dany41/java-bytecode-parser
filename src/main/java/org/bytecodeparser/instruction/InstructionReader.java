@@ -21,7 +21,7 @@ public class InstructionReader {
         .toMap(inst -> (byte) inst.getAnnotation(Opcode.class).value(), i -> i);
   }
 
-  public static List<Instruction> read(byte[] data) throws IOException {
+  public static List<Instruction> read(byte[] data) {
     DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(data));
     List<Instruction> instructions = new ArrayList<>();
     byte opcode;
