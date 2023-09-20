@@ -75,6 +75,10 @@ public class BytecodeFileResolverInResources implements BytecodeFileResolver {
 
     @Override
     public byte[] readFileToByteArrayViaFilePath(Path filePath) {
-        return new byte[0];
+        try {
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            throw new FileReadException(e.getMessage(), e.getCause());
+        }
     }
 }

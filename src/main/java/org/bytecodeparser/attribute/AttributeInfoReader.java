@@ -3,12 +3,11 @@ package org.bytecodeparser.attribute;
 import org.bytecodeparser.annotation.ConsumeConstantPool;
 import org.bytecodeparser.constant.ConstantType;
 import org.bytecodeparser.constant.UTF8Constant;
-import org.bytecodeparser.exceptions.NoImplementationFoundForGivenAttributeName;
+import org.bytecodeparser.exceptions.CouldNotInstantiateAttributeObject;
 import org.reflections.Reflections;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,15 +41,14 @@ public class AttributeInfoReader {
             boolean consumeCP = anAttributeClass.isAnnotationPresent(ConsumeConstantPool.class);
             Object instance = consumeCP
                     ? anAttributeClass
-                        .getConstructor(short.class, int.class, DataInputStream.class, ConstantType[].class)
-                        .newInstance(attributeNameIndex, attributeLength, dataInputStream, constantPool)
+                    .getConstructor(short.class, int.class, DataInputStream.class, ConstantType[].class)
+                    .newInstance(attributeNameIndex, attributeLength, dataInputStream, constantPool)
                     : anAttributeClass
-                        .getConstructor(short.class, int.class, DataInputStream.class)
-                        .newInstance(attributeNameIndex, attributeLength, dataInputStream);
+                    .getConstructor(short.class, int.class, DataInputStream.class)
+                    .newInstance(attributeNameIndex, attributeLength, dataInputStream);
             return (AttributeInfo) instance;
-        } catch (IllegalAccessException | InvocationTargetException | SecurityException | NoSuchMethodException |
-                 InstantiationException | IllegalArgumentException | NullPointerException e) {
-            throw new NoImplementationFoundForGivenAttributeName(attributeName, e);
+        } catch (Exception e) {
+            throw new CouldNotInstantiateAttributeObject(attributeName, e);
         }
     }
 }

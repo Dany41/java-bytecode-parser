@@ -24,20 +24,19 @@ public class InstructionReader {
   public static List<Instruction> read(byte[] data) {
     DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(data));
     List<Instruction> instructions = new ArrayList<>();
-    byte opcode;
-      try {
-        while (inputStream.available() > 0) {
-          if ((opcode = inputStream.readByte()) == 0) {
-            break;
-          }
-          Instruction instruction =
-              opCodeToInstruction.get(opcode).getConstructor(DataInputStream.class).newInstance(inputStream);
-          instructions.add(instruction);
+    byte opcode = -1;
+    try {
+      while (inputStream.available() > 0) {
+        if ((opcode = inputStream.readByte()) == 0) {
+          break;
         }
-      } catch (IOException | InstantiationException | IllegalAccessException | InvocationTargetException |
-               NoSuchMethodException e) {
-        throw new RuntimeException("Unable tor read instructions\n" + e);
+        Instruction instruction =
+                opCodeToInstruction.get(opcode).getConstructor(DataInputStream.class).newInstance(inputStream);
+        instructions.add(instruction);
       }
+    } catch (Exception e) {
+      throw new RuntimeException("Unable tor read instruction with opcode = " + opcode + "\n" + e);
+    }
     return instructions;
   }
 
