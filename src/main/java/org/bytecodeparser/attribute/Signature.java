@@ -3,14 +3,11 @@ package org.bytecodeparser.attribute;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class Signature {
-  private final short attributeNameIndex;
-  private final int attributeLength;
+public class Signature extends AttributeInfo {
   private final short signatureIndex;
 
-  public Signature(DataInputStream dataInputStream) throws IOException {
-    this.attributeNameIndex = dataInputStream.readShort();
-    this.attributeLength = dataInputStream.readInt();
+  public Signature(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
+    super(attributeNameIndex, attributeLength);
     this.signatureIndex = dataInputStream.readShort();
   }
 

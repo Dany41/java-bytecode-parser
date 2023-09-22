@@ -29,7 +29,9 @@ public class ParsingClassesTest {
     @MethodSource(value = "getClassesAsBytes")
     void parserShouldNotFailWhileParsingClassesFromResources(Path pathToClass) {
         byte[] classAsBytes = bytecodeFileResolver.readFileToByteArrayViaFilePath(pathToClass);
-        assertThat(BytecodeClass.from(classAsBytes)).isNotNull();
+        BytecodeClass bytecodeClass = BytecodeClass.from(classAsBytes);
+        assertThat(bytecodeClass).isNotNull();
+        System.out.println(bytecodeClass);
     }
 
     private static Stream<Arguments> getClassesAsBytes() {

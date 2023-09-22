@@ -3,15 +3,12 @@ package org.bytecodeparser.attribute;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class InnerClasses {
-  private final short attributeNameIndex;
-  private final int attributeLength;
+public class InnerClasses extends AttributeInfo {
   private final short numberOfClasses;
   private final ClassInfo[] classes;
 
-  public InnerClasses(DataInputStream dataInputStream) throws IOException {
-    this.attributeNameIndex = dataInputStream.readShort();
-    this.attributeLength = dataInputStream.readInt();
+  public InnerClasses(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
+    super(attributeNameIndex, attributeLength);
     this.numberOfClasses = dataInputStream.readShort();
     this.classes = ClassInfo.readNClassInfo(dataInputStream, numberOfClasses);
   }

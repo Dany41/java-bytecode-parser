@@ -6,15 +6,12 @@ import java.io.IOException;
 import static org.bytecodeparser.attribute.BootstrapMethods.BootstrapMethod.readNBootstrapMethod;
 import static org.bytecodeparser.utility.Utils.readShortArray;
 
-public class BootstrapMethods {
-  private final short attributeNameIndex;
-  private final int attributeLength;
+public class BootstrapMethods extends AttributeInfo {
   private final short numBootstrapMethods;
   private final BootstrapMethod[] bootstrapMethods;
 
-  public BootstrapMethods(DataInputStream dataInputStream) throws IOException {
-    this.attributeNameIndex = dataInputStream.readShort();
-    this.attributeLength = dataInputStream.readInt();
+  public BootstrapMethods(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
+    super(attributeNameIndex, attributeLength);
     this.numBootstrapMethods = dataInputStream.readShort();
     this.bootstrapMethods = readNBootstrapMethod(dataInputStream, numBootstrapMethods);
   }
