@@ -14,7 +14,11 @@ import org.bytecodeparser.structures.MethodInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.bytecodeparser.accessflags.ClassAccessFlags.parseAccessFlags;
 import static org.bytecodeparser.attribute.AttributeInfoReader.read;
@@ -41,6 +45,24 @@ public class BytecodeClass {
     private short attributesCount;
     private AttributeInfo[] attributeInfo;
 
+    public static BytecodeClass from(Class<?> type) {
+        String absolutePath = new File("").getAbsolutePath()
+                + "\\target\\classes\\"
+                + type.getPackageName().replace('.', '\\')
+                + '\\'
+                + type.getSimpleName()
+                + ".class";
+
+        absolutePath = absolutePath.replace('\\', '/');
+
+        byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(Path.of(absolutePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return BytecodeClass.from(bytes);
+    }
 
     public static BytecodeClass from(byte[] bytes) {
         DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
