@@ -5,6 +5,7 @@ import java.util.List;
 
 import static org.bytecodeparser.instruction.PrettyPrintTypes.*;
 
+// todo: rewrite to use name of instruction like constant name
 public enum InstructionTypes {
     opcode2("iconst_m1", simple),
     opcode3("iconst_0", simple),
