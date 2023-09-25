@@ -4,6 +4,7 @@ import org.bytecodeparser.annotation.ConsumeConstantPool;
 import org.bytecodeparser.constant.ConstantType;
 import org.bytecodeparser.instruction.Instruction;
 import org.bytecodeparser.instruction.InstructionReader;
+import org.bytecodeparser.instruction.Instructions;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class Code extends AttributeInfo {
   private final short maxStack;
   private final short maxLocals;
   private final int codeLength;
-  private final List<Instruction> code;
+  private final List<Instructions> code;
   private final short exceptionTableLength;
   private final ExceptionTable[] exceptionTable;
   private final short attributesCount;
