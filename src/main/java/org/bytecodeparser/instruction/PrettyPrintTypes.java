@@ -4,24 +4,25 @@ import org.bytecodeparser.utility.ThrowingFunction;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public enum PrettyPrintTypes {
-    simple(dataInputStream -> InstructionArguments.builder().build(), (instruction, arguments) -> instruction.name),
-    simpleByte(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().first(dataInputStream.readByte()).build())
-            , (instruction, arguments) -> instruction.name + " " + (byte) arguments.getFirst()),
-    simpleShort(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().first(dataInputStream.readShort()).build())
-            , (instruction, arguments) -> instruction.name + " " + (short) arguments.getFirst()),
+    simple(dataInputStream -> InstructionArguments.builder().build()),
+    simpleByte(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().first(dataInputStream.readByte()).build())),
+    simpleShort(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().first((dataInputStream.readByte() << 8) | dataInputStream.readByte()).build())),
+    tripleShortByteByte(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder()
+            .first((dataInputStream.readByte() << 8) | dataInputStream.readByte())
+            .second(dataInputStream.readByte())
+            .third(dataInputStream.readByte())
+            .build())),
 
     ;
 
     Function<DataInputStream, InstructionArguments> resolveStrategy;
-    BiFunction<InstructionTypes, InstructionArguments, String> prettyPrintStrategy;
 
-    PrettyPrintTypes(Function<DataInputStream, InstructionArguments> resolveStrategy, BiFunction<InstructionTypes, InstructionArguments, String> prettyPrintStrategy) {
+
+    PrettyPrintTypes(Function<DataInputStream, InstructionArguments> resolveStrategy) {
         this.resolveStrategy = resolveStrategy;
-        this.prettyPrintStrategy = prettyPrintStrategy;
     }
 
     static Function<DataInputStream, InstructionArguments> resolveStrategyWrapper(ThrowingFunction<DataInputStream, IOException, InstructionArguments> function) {

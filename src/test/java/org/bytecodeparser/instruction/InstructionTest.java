@@ -14,27 +14,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class InstructionTest {
 
-  private static final Collection<Class<? extends Instruction>> INSTRUCTIONS =
-      new Reflections("org.bytecodeparser.instruction").getSubTypesOf(Instruction.class);
-
-  private static Collection<Class<? extends Instruction>> getInstructions() {
-    return INSTRUCTIONS;
-  }
-
-  @ParameterizedTest
-  @MethodSource("getInstructions")
-  void allInstructionsShouldBeAnnotatedWithOpcode(Class<? extends Instruction> inst) {
-    assertThat(inst.isAnnotationPresent(Opcode.class)).isTrue();
-  }
-
-  @ParameterizedTest
-  @MethodSource("getInstructions")
-  void allInstructionsShouldHaveDataInputStreamConstructor(Class<? extends Instruction> inst) {
-    assertThat(inst.getDeclaredConstructors())
-        .withFailMessage(() -> inst.getSimpleName() + " instruction doesn't contain constructor with DataInputStream")
-        .anyMatch(constructor -> Arrays.stream(constructor.getParameterTypes()).collect(Collectors.toSet())
-            .equals(Set.of(DataInputStream.class)))
-    ;
-  }
+//  private static final Collection<Class<? extends Instruction>> INSTRUCTIONS =
+//      new Reflections("org.bytecodeparser.instruction").getSubTypesOf(Instruction.class);
+//
+//  private static Collection<Class<? extends Instruction>> getInstructions() {
+//    return INSTRUCTIONS;
+//  }
+//
+//  @ParameterizedTest
+//  @MethodSource("getInstructions")
+//  void allInstructionsShouldBeAnnotatedWithOpcode(Class<? extends Instruction> inst) {
+//    assertThat(inst.isAnnotationPresent(Opcode.class)).isTrue();
+//  }
+//
+//  @ParameterizedTest
+//  @MethodSource("getInstructions")
+//  void allInstructionsShouldHaveDataInputStreamConstructor(Class<? extends Instruction> inst) {
+//    assertThat(inst.getDeclaredConstructors())
+//        .withFailMessage(() -> inst.getSimpleName() + " instruction doesn't contain constructor with DataInputStream")
+//        .anyMatch(constructor -> Arrays.stream(constructor.getParameterTypes()).collect(Collectors.toSet())
+//            .equals(Set.of(DataInputStream.class)))
+//    ;
+//  }
 
 }

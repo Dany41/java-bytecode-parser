@@ -11,4 +11,18 @@ public class InstructionArguments {
     private Object second;
     private Object third;
     private Object fourth;
+
+    String prettyPrint() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (first != null) {
+            stringBuilder.append(" " + first);
+        } else if (second != null) {
+            stringBuilder.append(" " + second);
+        } else if (third != null) {
+            stringBuilder.append(" " + third);
+        } else if (fourth != null) {
+            stringBuilder.append(" " + fourth);
+        }
+        return stringBuilder.toString();
+    }
 }
