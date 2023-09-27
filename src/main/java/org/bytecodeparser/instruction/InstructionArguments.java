@@ -7,22 +7,16 @@ import lombok.Data;
 @Builder
 public class InstructionArguments {
 
-    private Object first;
-    private Object second;
-    private Object third;
-    private Object fourth;
+    private InstructionTypes type;
+
+    private byte indexByte;
+    private short indexShort;
+    private byte count;
+    private byte zero;
+    private byte value;
+    private int branchOffset;
 
     String prettyPrint() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (first != null) {
-            stringBuilder.append(" " + first);
-        } else if (second != null) {
-            stringBuilder.append(" " + second);
-        } else if (third != null) {
-            stringBuilder.append(" " + third);
-        } else if (fourth != null) {
-            stringBuilder.append(" " + fourth);
-        }
-        return stringBuilder.toString();
+        return type.prettyPrintTypes.prettyPrintArgumentsStrategy.apply(this);
     }
 }

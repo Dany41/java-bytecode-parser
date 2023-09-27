@@ -7,22 +7,27 @@ import java.io.IOException;
 import java.util.function.Function;
 
 public enum PrettyPrintTypes {
-    simple(dataInputStream -> InstructionArguments.builder().build()),
-    simpleByte(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().first(dataInputStream.readByte()).build())),
-    simpleShort(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().first((dataInputStream.readByte() << 8) | dataInputStream.readByte()).build())),
-    tripleShortByteByte(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder()
-            .first((dataInputStream.readByte() << 8) | dataInputStream.readByte())
-            .second(dataInputStream.readByte())
-            .third(dataInputStream.readByte())
-            .build())),
+    SIMPLE(dataInputStream -> InstructionArguments.builder().build(), arguments -> ""),
+    SIMPLE_BYTE(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().indexByte(dataInputStream.readByte()).build())
+            , arguments -> " " + arguments.getIndexByte()),
+    SIMPLE_SHORT(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().indexShort((short) ((dataInputStream.readByte() << 8) | dataInputStream.readByte())).build())
+            , arguments -> " " + arguments.getIndexShort()),
+    TRIPLE_SHORT_BYTE_BYTE(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder()
+            .indexShort((short) ((dataInputStream.readByte() << 8) | dataInputStream.readByte()))
+            .count(dataInputStream.readByte())
+            .zero(dataInputStream.readByte())
+            .build())
+            , arguments -> " " + arguments.getIndexShort() + " " + arguments.getCount() + " " + arguments.getZero()),
 
     ;
 
-    Function<DataInputStream, InstructionArguments> resolveStrategy;
+    final Function<DataInputStream, InstructionArguments> resolveStrategy;
+    final Function<InstructionArguments, String> prettyPrintArgumentsStrategy;
 
 
-    PrettyPrintTypes(Function<DataInputStream, InstructionArguments> resolveStrategy) {
+    PrettyPrintTypes(Function<DataInputStream, InstructionArguments> resolveStrategy, Function<InstructionArguments, String> prettyPrintArgumentsStrategy) {
         this.resolveStrategy = resolveStrategy;
+        this.prettyPrintArgumentsStrategy = prettyPrintArgumentsStrategy;
     }
 
     static Function<DataInputStream, InstructionArguments> resolveStrategyWrapper(ThrowingFunction<DataInputStream, IOException, InstructionArguments> function) {
