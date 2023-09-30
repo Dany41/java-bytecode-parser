@@ -2,8 +2,8 @@ package org.bytecodeparser.attribute;
 
 import org.bytecodeparser.annotation.ConsumeConstantPool;
 import org.bytecodeparser.constant.ConstantType;
-import org.bytecodeparser.instruction.Instruction;
 import org.bytecodeparser.instruction.InstructionReader;
+import org.bytecodeparser.instruction.Instruction;
 
 import java.io.DataInputStream;
 import java.io.IOException;
