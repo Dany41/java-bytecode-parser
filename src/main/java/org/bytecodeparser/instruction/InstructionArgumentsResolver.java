@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import static org.bytecodeparser.utility.ThrowingFunction.resolveStrategyWrapper;
 
-public enum InstructionArgumentResolver {
+public enum InstructionArgumentsResolver {
     EMPTY(dataInputStream -> InstructionArguments.EMPTY, arguments -> ""),
     SIMPLE_BYTE(resolveStrategyWrapper(
             dataInputStream -> InstructionArguments.builder()
@@ -35,7 +35,7 @@ public enum InstructionArgumentResolver {
     final Function<InstructionArguments, String> prettyPrintArgumentsStrategy;
 
 
-    InstructionArgumentResolver(Function<DataInputStream, InstructionArguments> resolveStrategy, Function<InstructionArguments, String> prettyPrintArgumentsStrategy) {
+    InstructionArgumentsResolver(Function<DataInputStream, InstructionArguments> resolveStrategy, Function<InstructionArguments, String> prettyPrintArgumentsStrategy) {
         this.argumentsResolveStrategy = resolveStrategy;
         this.prettyPrintArgumentsStrategy = prettyPrintArgumentsStrategy;
     }

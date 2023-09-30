@@ -24,7 +24,7 @@ public class Instruction {
 
     @SuppressWarnings("unused")
     public String prettyPrint() {
-        return type.name() + type.instructionArgumentResolver.prettyPrintArgumentsStrategy.apply(args);
+        return type.name() + type.instructionArgumentsResolver.prettyPrintArgumentsStrategy.apply(args);
     }
 
 }

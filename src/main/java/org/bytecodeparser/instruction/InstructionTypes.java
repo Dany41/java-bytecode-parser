@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.io.DataInputStream;
 
-import static org.bytecodeparser.instruction.InstructionArgumentResolver.*;
+import static org.bytecodeparser.instruction.InstructionArgumentsResolver.*;
 
 @SuppressWarnings("unused")
 public enum InstructionTypes {
@@ -42,15 +42,15 @@ public enum InstructionTypes {
 
     @Getter
     final Integer opCode;
-    final InstructionArgumentResolver instructionArgumentResolver;
+    final InstructionArgumentsResolver instructionArgumentsResolver;
 
-    InstructionTypes(int opCode, InstructionArgumentResolver prettyPrintTypes) {
+    InstructionTypes(int opCode, InstructionArgumentsResolver prettyPrintTypes) {
         this.opCode = opCode;
-        this.instructionArgumentResolver = prettyPrintTypes;
+        this.instructionArgumentsResolver = prettyPrintTypes;
     }
 
     public InstructionArguments resolve(DataInputStream dataInputStream) {
-        return instructionArgumentResolver.argumentsResolveStrategy.apply(dataInputStream);
+        return instructionArgumentsResolver.argumentsResolveStrategy.apply(dataInputStream);
     }
 
 }
