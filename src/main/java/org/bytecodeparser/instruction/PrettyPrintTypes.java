@@ -7,18 +7,23 @@ import java.io.IOException;
 import java.util.function.Function;
 
 public enum PrettyPrintTypes {
-    SIMPLE(dataInputStream -> InstructionArguments.builder().build(), arguments -> ""),
+    EMPTY(dataInputStream -> Constants.EMPTY_ARGS, arguments -> ""),
     SIMPLE_BYTE(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().indexByte(dataInputStream.readByte()).build())
             , arguments -> " " + arguments.getIndexByte()),
     SIMPLE_SHORT(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder().indexShort((short) ((dataInputStream.readByte() << 8) | dataInputStream.readByte())).build())
             , arguments -> " " + arguments.getIndexShort()),
-    TRIPLE_SHORT_BYTE_BYTE(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder()
+    TRIPLE_SHORT_BYTE_ZERO(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder()
             .indexShort((short) ((dataInputStream.readByte() << 8) | dataInputStream.readByte()))
             .count(dataInputStream.readByte())
-            .zero(dataInputStream.readByte())
+            .zero1(dataInputStream.readByte())
             .build())
-            , arguments -> " " + arguments.getIndexShort() + " " + arguments.getCount() + " " + arguments.getZero()),
-
+            , arguments -> " " + arguments.getIndexShort() + " " + arguments.getCount() + " " + arguments.getZero1()),
+    TRIPLE_SHORT_ZERO_ZERO(resolveStrategyWrapper(dataInputStream -> InstructionArguments.builder()
+            .indexShort((short) ((dataInputStream.readByte() << 8) | dataInputStream.readByte()))
+            .zero1(dataInputStream.readByte())
+            .zero2(dataInputStream.readByte())
+            .build())
+            , arguments -> " " + arguments.getIndexShort() + " " + arguments.getZero1() + " " + arguments.getZero2()),
     ;
 
     final Function<DataInputStream, InstructionArguments> resolveStrategy;
@@ -38,5 +43,9 @@ public enum PrettyPrintTypes {
                 throw new RuntimeException(ex);
             }
         };
+    }
+
+    private static class Constants {
+        public static final InstructionArguments EMPTY_ARGS = InstructionArguments.builder().build();
     }
 }

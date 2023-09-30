@@ -7,16 +7,12 @@ import lombok.Data;
 @Builder
 public class InstructionArguments {
 
-    private InstructionTypes type;
-
     private byte indexByte;
     private short indexShort;
     private byte count;
-    private byte zero;
+    private byte zero1;
+    private byte zero2;
     private byte value;
     private int branchOffset;
 
-    String prettyPrint() {
-        return type.prettyPrintTypes.prettyPrintArgumentsStrategy.apply(this);
-    }
 }
