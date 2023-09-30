@@ -13,6 +13,7 @@ public class Instruction {
 
     private static final Map<Integer, InstructionTypes> instructions = EnumSet.allOf(InstructionTypes.class).stream()
             .collect(Collectors.toMap(InstructionTypes::getOpCode, Function.identity()));
+
     final InstructionArguments args;
     private final InstructionTypes type;
 
@@ -23,7 +24,7 @@ public class Instruction {
 
     @SuppressWarnings("unused")
     public String prettyPrint() {
-        return type.prettyPrint() + type.prettyPrintTypes.prettyPrintArgumentsStrategy.apply(args);
+        return type.name() + type.instructionArgumentResolver.prettyPrintArgumentsStrategy.apply(args);
     }
 
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.io.DataInputStream;
 
-import static org.bytecodeparser.instruction.PrettyPrintTypes.*;
+import static org.bytecodeparser.instruction.InstructionArgumentResolver.*;
 
 @SuppressWarnings("unused")
 public enum InstructionTypes {
@@ -38,28 +38,19 @@ public enum InstructionTypes {
     INVOKEINTERFACE(185, TRIPLE_SHORT_BYTE_ZERO),
     INVOKEDYNAMIC(186, TRIPLE_SHORT_ZERO_ZERO),
     NEW(187, SIMPLE_SHORT),
-    CHECKCAST(192, SIMPLE_SHORT),
-    ;
+    CHECKCAST(192, SIMPLE_SHORT);
 
     @Getter
     final Integer opCode;
-    final PrettyPrintTypes prettyPrintTypes;
+    final InstructionArgumentResolver instructionArgumentResolver;
 
-
-    InstructionTypes(int opCode, PrettyPrintTypes prettyPrintTypes) {
-
+    InstructionTypes(int opCode, InstructionArgumentResolver prettyPrintTypes) {
         this.opCode = opCode;
-        this.prettyPrintTypes = prettyPrintTypes;
-    }
-
-    public String prettyPrint() {
-        return name();
+        this.instructionArgumentResolver = prettyPrintTypes;
     }
 
     public InstructionArguments resolve(DataInputStream dataInputStream) {
-        return prettyPrintTypes.resolveStrategy.apply(dataInputStream);
+        return instructionArgumentResolver.argumentsResolveStrategy.apply(dataInputStream);
     }
-
-
 
 }

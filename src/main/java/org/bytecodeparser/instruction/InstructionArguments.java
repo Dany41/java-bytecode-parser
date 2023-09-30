@@ -7,6 +7,8 @@ import lombok.Data;
 @Builder
 public class InstructionArguments {
 
+    public static final InstructionArguments EMPTY = InstructionArguments.builder().build();
+
     private byte indexByte;
     private short indexShort;
     private byte count;
