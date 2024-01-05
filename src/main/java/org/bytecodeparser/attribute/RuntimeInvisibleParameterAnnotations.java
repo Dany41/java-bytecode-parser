@@ -7,12 +7,12 @@ import java.io.IOException;
 public class RuntimeInvisibleParameterAnnotations {
   private final short attributeNameIndex;
   private final int attributeLength;
-  private final byte numParameters;
+  private final short numParameters;
 
   public RuntimeInvisibleParameterAnnotations(DataInputStream dataInputStream) throws IOException {
     this.attributeNameIndex = dataInputStream.readShort();
     this.attributeLength = dataInputStream.readInt();
-    this.numParameters = dataInputStream.readByte();
+    this.numParameters = (short) Byte.toUnsignedInt(dataInputStream.readByte());
     this.parameterAnnotations = ParameterAnnotation.readNParameterAnnotation(dataInputStream, numParameters);
   }
 

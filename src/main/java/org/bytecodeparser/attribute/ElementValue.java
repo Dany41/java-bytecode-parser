@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 public class ElementValue {
-  private final byte tag;
+  private final short tag;
 
   private final short constValueIndex;
   private final EnumConstValue enumConstValue;
@@ -13,7 +13,7 @@ public class ElementValue {
   private final ArrayValue arrayValue;
 
   public ElementValue(DataInputStream dataInputStream) throws IOException {
-    this.tag = dataInputStream.readByte();
+    this.tag = (short) Byte.toUnsignedInt(dataInputStream.readByte());
 
     short constValueIndex = 0;
     EnumConstValue enumConstValue = null;

@@ -7,12 +7,12 @@ import static org.bytecodeparser.attribute.MethodParameters.Parameter.readNParam
 
 public class MethodParameters extends AttributeInfo {
 
-    private final byte parametersCount;
+    private final short parametersCount;
     private final Parameter[] parameters;
 
     public MethodParameters(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
         super(attributeNameIndex, attributeLength);
-        this.parametersCount = dataInputStream.readByte();
+        this.parametersCount = (short) Byte.toUnsignedInt(dataInputStream.readByte());
         this.parameters = readNParameters(dataInputStream, this.parametersCount);
     }
 

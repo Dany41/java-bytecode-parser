@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class ConstantPoolReader {
-    private static final Map<Byte, Class<? extends ConstantType>> tagToConstantType;
+    private static final Map<Short, Class<? extends ConstantType>> tagToConstantType;
 
     static {
         Reflections reflections = new Reflections("org.bytecodeparser.constant");
@@ -21,7 +21,7 @@ public class ConstantPoolReader {
         ConstantType[] constantPool = new ConstantType[constantPoolCount];
 
         for (int i = 1; i < constantPoolCount; i++) {
-            byte tag = dataInputStream.readByte();
+            short tag = (short) Byte.toUnsignedInt(dataInputStream.readByte());
             try {
                 constantPool[i] = tagToConstantType.get(tag).getDeclaredConstructor(DataInputStream.class).newInstance(dataInputStream);
             } catch (NullPointerException e) {

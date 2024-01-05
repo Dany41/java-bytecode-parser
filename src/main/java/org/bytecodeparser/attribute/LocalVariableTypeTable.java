@@ -3,15 +3,12 @@ package org.bytecodeparser.attribute;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-public class LocalVariableTypeTable {
-  private final short attributeNameIndex;
-  private final int attributeLength;
+public class LocalVariableTypeTable extends AttributeInfo {
   private final short localVariableTypeTableLength;
   private final LocalVariableType[] localVariableTypeTable;
 
-  public LocalVariableTypeTable(DataInputStream dataInputStream) throws IOException {
-    this.attributeNameIndex = dataInputStream.readShort();
-    this.attributeLength = dataInputStream.readInt();
+  public LocalVariableTypeTable(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
+    super(attributeNameIndex, attributeLength);
     this.localVariableTypeTableLength = dataInputStream.readShort();
     this.localVariableTypeTable = LocalVariableType.readNLocalVariableType(dataInputStream, localVariableTypeTableLength);
   }

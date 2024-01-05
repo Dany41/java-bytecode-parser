@@ -1,29 +1,24 @@
 package org.bytecodeparser.attribute;
 
-import lombok.Getter;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
 import static org.bytecodeparser.attribute.StackMapTable.StackMapFrame.readNStackMapFrame;
 import static org.bytecodeparser.attribute.StackMapTable.VerificationTypeInfo.readNVerificationInfo;
 
-public class StackMapTable {
-  private final short attributeNameIndex;
-  private final int attributeLength;
+public class StackMapTable extends AttributeInfo {
   private final short numberOfEntries;
   private final StackMapFrame[] entries;
 
 
-  public StackMapTable(DataInputStream dataInputStream) throws IOException {
-    this.attributeNameIndex = dataInputStream.readShort();
-    this.attributeLength = dataInputStream.readInt();
+  public StackMapTable(short attributeNameIndex, int attributeLength, DataInputStream dataInputStream) throws IOException {
+    super(attributeNameIndex, attributeLength);
     this.numberOfEntries = dataInputStream.readShort();
     this.entries = readNStackMapFrame(dataInputStream, numberOfEntries);
   }
 
   static final class StackMapFrame {
-    @Getter
+
     private final short type;
     private final short offsetDelta;
     private final short numberOfLocals;
@@ -32,7 +27,7 @@ public class StackMapTable {
     private final VerificationTypeInfo[] stack;
 
     public StackMapFrame(DataInputStream dataInputStream) throws IOException {
-      this.type = dataInputStream.readByte();
+      this.type = (short) Byte.toUnsignedInt(dataInputStream.readByte());
 
       short offsetDelta = 0;
       short numberOfLocals = 0;
@@ -40,7 +35,12 @@ public class StackMapTable {
       short numberOfStackItems = 0;
       VerificationTypeInfo[] stack = new VerificationTypeInfo[numberOfStackItems];
 
-      if (isSameLocals1StackItemFrame()) {
+      if (isSameFrame()) {
+        numberOfStackItems = 0;
+        offsetDelta = this.type;
+        stack = readNVerificationInfo(dataInputStream, numberOfStackItems);
+      } else if (isSameLocals1StackItemFrame()) {
+        offsetDelta = (short) (64 - this.type);
         numberOfStackItems = 1;
         stack = readNVerificationInfo(dataInputStream, numberOfStackItems);
       } else if(isSameLocals1StackItemFrameExtended()) {
@@ -82,7 +82,7 @@ public class StackMapTable {
     }
 
     public boolean isSameLocals1StackItemFrame() {
-      return type >= 64 && type < 127;
+      return type >= 64 && type < 128;
     }
 
     public boolean isSameLocals1StackItemFrameExtended() {
@@ -98,7 +98,7 @@ public class StackMapTable {
     }
 
     public boolean isAppendFrame() {
-      return type >= 252 && type < 254;
+      return type >= 252 && type < 255;
     }
 
     public boolean isFullFrame() {
