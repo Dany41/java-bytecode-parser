@@ -24,6 +24,8 @@ public class ConstantPoolReader {
             short tag = (short) Byte.toUnsignedInt(dataInputStream.readByte());
             try {
                 constantPool[i] = tagToConstantType.get(tag).getDeclaredConstructor(DataInputStream.class).newInstance(dataInputStream);
+                // Double and Long constants take two places in constant pool
+                if (tag == 5 || tag == 6) i++;
             } catch (NullPointerException e) {
                 throw new RuntimeException("Couldn't create instance of Constant with tag " + tag, e);
             } catch (Exception e) {
