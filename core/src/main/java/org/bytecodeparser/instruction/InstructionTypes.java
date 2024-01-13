@@ -8,6 +8,8 @@ import static org.bytecodeparser.instruction.InstructionArgumentsResolver.*;
 
 @SuppressWarnings("unused")
 public enum InstructionTypes {
+    NOP(0, EMPTY),
+    ACONST_NULL(1, EMPTY),
     ICONST_M1(2, EMPTY),
     ICONST_0(3, EMPTY),
     ICONST_1(4, EMPTY),
@@ -15,6 +17,13 @@ public enum InstructionTypes {
     ICONST_3(6, EMPTY),
     ICONST_4(7, EMPTY),
     ICONST_5(8, EMPTY),
+    LCONST_0(9, EMPTY),
+    LCONST_1(10, EMPTY),
+    FCONST_0(11, EMPTY),
+    FCONST_1(12, EMPTY),
+    FCONST_2(13, EMPTY),
+    DCONST_0(14, EMPTY),
+    DCONST_1(15, EMPTY),
     BIPUSH(16, SIMPLE_BYTE),
     LDC(18, SIMPLE_BYTE),
     LDC2_W(20, SIMPLE_SHORT),
