@@ -2,6 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+scripts/instructions_with_opcodes.txt.txt
 
 ### IntelliJ IDEA ###
 .idea

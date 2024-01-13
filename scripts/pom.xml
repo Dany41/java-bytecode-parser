@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.example</groupId>
+        <artifactId>java-bytecode-parser</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>scripts</artifactId>
+    <name>scripts</name>
+    <url>http://maven.apache.org</url>
+
+    <build>
+        <plugins>
+            <!-- Maven Exec Plugin Configuration -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <!-- Execute the Python script before the test phase -->
+                    <execution>
+                        <id>run-python-script</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>python</executable>
+                            <arguments>
+                                <argument>scrap_bytecode_spec.py</argument>
+                                <!-- Add additional script arguments if needed -->
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
