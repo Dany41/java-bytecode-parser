@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: Java CI with Maven and Python
 
 on:
   push:
@@ -27,5 +27,15 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Install Python and pip
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install beautifulsoup4 package
+      run: pip install beautifulsoup4
+    - name: Install requests package
+      run: pip install requests
+    - name: Install re package
+      run: pip install re
     - name: Build with Maven
       run: mvn -B package --file pom.xml
