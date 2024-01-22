@@ -8,7 +8,7 @@ def check_file_exists(file_path):
 
 file_path = "instructions_with_opcodes.txt"
 
-if check_file_exists(file_path):
+if not check_file_exists(file_path):
     url = "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-6.html"
     response = requests.get(url)
 
