@@ -12,9 +12,26 @@ public enum InstructionArgumentsResolver {
                     .indexByte(dataInputStream.readByte())
                     .build()),
             arguments -> " " + arguments.getIndexByte()),
+    TWO_BYTE(throwableWrapper(
+            dataInputStream -> InstructionArguments.builder()
+                    .indexByte(dataInputStream.readByte())
+                    .constByte(dataInputStream.readByte())
+                    .build()),
+            arguments -> " " + arguments.getIndexByte()),
+    THREE_BYTES(throwableWrapper(
+            dataInputStream -> InstructionArguments.builder()
+                    .indexShort((short) ((dataInputStream.readByte() << 8) | dataInputStream.readByte()))
+                    .dimensions(dataInputStream.readByte())
+                    .build()),
+            arguments -> " " + arguments.getIndexByte()),
     SIMPLE_SHORT(throwableWrapper(
             dataInputStream -> InstructionArguments.builder()
                     .indexShort((short) ((dataInputStream.readByte() << 8) | dataInputStream.readByte()))
+                    .build()),
+            arguments -> " " + arguments.getIndexShort()),
+    SIMPLE_INT(throwableWrapper(
+            dataInputStream -> InstructionArguments.builder()
+                    .indexInt((short) ((dataInputStream.readByte() << 24) | (dataInputStream.readByte() << 16) | (dataInputStream.readByte() << 8) | dataInputStream.readByte()))
                     .build()),
             arguments -> " " + arguments.getIndexShort()),
     TRIPLE_SHORT_BYTE_ZERO(throwableWrapper(
